@@ -28,7 +28,7 @@ const Navbar = () => {
             {/* Centered Navigation Links */}
             <div className="hidden md:flex flex-grow justify-center space-x-4">
               {[
-                // { href: "/", label: "AI-Home" },
+                { href: "/", label: "" },
                 // { href: "/", label: "Updates" },
 
                 // { href: "/News", label: "Top News" },
