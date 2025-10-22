@@ -1,0 +1,96 @@
+
+{
+  "id": 1,
+  "title": "Nvidia's Blackwell GPU: A New Era for AI",
+  "slug": "nvidia-blackwell-gpu-a-new-era-for-ai",
+  "content": "<!-- HTML or Markdown content of the blog post -->",
+  "excerpt": "Nvidia's new Blackwell GPU architecture is set to redefine the boundaries of AI and high-performance computing.",
+  "featured_image": "https://example.com/images/nvidia-blackwell.jpg",
+  "author": {
+    "name": "John Doe",
+    "avatar": "https://example.com/avatars/john-doe.jpg"
+  },
+  "category": {
+    "name": "AI",
+    "slug": "ai"
+  },
+  "tags": [
+    {
+      "name": "NVIDIA",
+      "slug": "nvidia"
+    },
+    {
+      "name": "GPU",
+      "slug": "gpu"
+    },
+    {
+      "name": "AI Hardware",
+      "slug": "ai-hardware"
+    }
+  ],
+  "published_at": "2025-10-18T10:00:00Z",
+  "updated_at": "2025-10-18T12:30:00Z",
+  "views": 3500,
+  "seo": {
+    "meta_title": "Nvidia's Blackwell GPU: A Game Changer for AI | My Blog",
+    "meta_description": "Discover how Nvidia's Blackwell GPU is revolutionizing AI and high-performance computing. An in-depth look at the new architecture.",
+    "canonical_url": "https://example.com/blog/nvidia-blackwell-gpu-a-new-era-for-ai",
+    "keywords": "NVIDIA, Blackwell, GPU, AI, Artificial Intelligence, High-Performance Computing",
+    "open_graph": {
+      "title": "Nvidia's Blackwell GPU: A New Era for AI",
+      "description": "Nvidia's new Blackwell GPU architecture is set to redefine the boundaries of AI and high-performance computing.",
+      "image": "https://example.com/images/og-nvidia-blackwell.jpg",
+      "type": "article",
+      "url": "https://example.com/blog/nvidia-blackwell-gpu-a-new-era-for-ai"
+    },
+    "twitter": {
+      "card": "summary_large_image",
+      "title": "Nvidia's Blackwell GPU: A New Era for AI",
+      "description": "Nvidia's new Blackwell GPU architecture is set to redefine the boundaries of AI and high-performance computing.",
+      "image": "https://example.com/images/twitter-nvidia-blackwell.jpg",
+      "creator": "@myblog"
+    },
+    "schema": {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "headline": "Nvidia's Blackwell GPU: A New Era for AI",
+      "image": "https://example.com/images/nvidia-blackwell.jpg",
+      "author": {
+        "@type": "Person",
+        "name": "John Doe"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "My Blog",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://example.com/logo.png"
+        }
+      },
+      "datePublished": "2025-10-18",
+      "dateModified": "2025-10-18",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://example.com/blog/nvidia-blackwell-gpu-a-new-era-for-ai"
+      }
+    }
+  },
+  "ad_placements": {
+    "in_article_positions": [3, 7],
+    "enable_auto_ads": true
+  },
+  "related_posts": [
+    {
+      "id": 2,
+      "title": "Google's Gemini: The Next Generation of Multimodal AI",
+      "slug": "google-gemini-next-generation-multimodal-ai",
+      "featured_image": "https://example.com/images/google-gemini.jpg"
+    },
+    {
+      "id": 3,
+      "title": "Anthropic's Claude 3: A New Contender in the LLM Race",
+      "slug": "anthropic-claude-3-contender-llm-race",
+      "featured_image": "https://example.com/images/claude-3.jpg"
+    }
+  ]
+}

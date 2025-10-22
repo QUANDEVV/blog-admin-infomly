@@ -1,0 +1,117 @@
+{
+    "blogs": [
+      {
+        "id": 1,
+        "title": "Breaking: Global Markets Tumble",
+        "image": "blog_images/markets_tumble.jpg",
+        "short_description": "Global stock markets are experiencing sharp declines as investors react to uncertainty.",
+        "category": "news",
+        "date": "2025-01-01"
+      },
+      {
+        "id": 2,
+        "title": "World Leaders Discuss Climate Change",
+        "image": "blog_images/climate_meeting.jpg",
+        "short_description": "At the UN Summit, leaders debate on urgent measures to combat global warming.",
+        "category": "news",
+        "date": "2025-01-02"
+      },
+      {
+        "id": 3,
+        "title": "Apple Unveils Next-Gen MacBook",
+        "image": "blog_images/macbook.jpg",
+        "short_description": "Apple's latest MacBook features groundbreaking M2 chips for enhanced performance.",
+        "category": "tech",
+        "date": "2025-01-03"
+      },
+      {
+        "id": 4,
+        "title": "The Future of Electric Vehicles",
+        "image": "blog_images/electric_cars.jpg",
+        "short_description": "Tech giants are investing billions into EVs, reshaping the automobile industry.",
+        "category": "tech",
+        "date": "2025-01-04"
+      },
+      {
+        "id": 5,
+        "title": "OpenAI Launches ChatGPT-5",
+        "image": "blog_images/chatgpt5.jpg",
+        "short_description": "ChatGPT-5 sets a new benchmark in natural language understanding and generation.",
+        "category": "ai",
+        "date": "2025-01-05"
+      },
+      {
+        "id": 6,
+        "title": "AI in Healthcare: Transforming Diagnosis",
+        "image": "blog_images/ai_healthcare.jpg",
+        "short_description": "Artificial Intelligence is revolutionizing healthcare with faster, accurate diagnoses.",
+        "category": "ai",
+        "date": "2025-01-06"
+      },
+      {
+        "id": 7,
+        "title": "Stock Market Tips for Beginners",
+        "image": "blog_images/stock_tips.jpg",
+        "short_description": "Learn the basics of stock trading and how to navigate market trends.",
+        "category": "finance",
+        "date": "2025-01-07"
+      },
+      {
+        "id": 8,
+        "title": "Cryptocurrency Trends in 2025",
+        "image": "blog_images/crypto_trends.jpg",
+        "short_description": "Experts predict how Bitcoin, Ethereum, and altcoins will perform in 2025.",
+        "category": "finance",
+        "date": "2025-01-08"
+      },
+      {
+        "id": 9,
+        "title": "10 Tips for a Beautiful Garden",
+        "image": "blog_images/beautiful_garden.jpg",
+        "short_description": "Learn essential tips for creating a stunning and low-maintenance garden.",
+        "category": "home and garden",
+        "date": "2025-01-09"
+      },
+      {
+        "id": 10,
+        "title": "Best DIY Home Renovation Projects",
+        "image": "blog_images/home_renovation.jpg",
+        "short_description": "Simple and cost-effective renovation ideas to enhance your home's value.",
+        "category": "home and garden",
+        "date": "2025-01-10"
+      },
+      {
+        "id": 11,
+        "title": "Top 5 Gaming Laptops of 2025",
+        "image": "blog_images/gaming_laptops.jpg",
+        "short_description": "A guide to the best gaming laptops, balancing performance and price.",
+        "category": "computer and electronics",
+        "date": "2025-01-11"
+      },
+      {
+        "id": 12,
+        "title": "The Evolution of Smart TVs",
+        "image": "blog_images/smart_tv.jpg",
+        "short_description": "Discover how smart TVs have transformed home entertainment in recent years.",
+        "category": "computer and electronics",
+        "date": "2025-01-12"
+      },
+      {
+        "id": 13,
+        "title": "How to Improve Mental Health with Simple Steps",
+        "image": "blog_images/mental_health.jpg",
+        "short_description": "Explore easy ways to improve your mental health and well-being daily.",
+        "category": "health",
+        "date": "2025-01-13"
+      },
+      {
+        "id": 14,
+        "title": "The Importance of Regular Exercise for Your Health",
+        "image": "blog_images/exercise_health.jpg",
+        "short_description": "Regular exercise is key to staying healthy. Learn why it’s essential for your body and mind.",
+        "category": "health",
+        "date": "2025-01-14"
+      }
+    ]
+  }
+  

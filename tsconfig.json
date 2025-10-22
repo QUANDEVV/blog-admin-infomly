@@ -1,0 +1,46 @@
+{
+  "compilerOptions": {
+    "target": "ES2017",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ], // Includes DOM and ESNext features
+    "allowJs": true, // Allows using JavaScript files in the project
+    "skipLibCheck": true, // Skips type checking of declaration files
+    "strict": true, // Enables strict type-checking
+    "noEmit": true, // Prevents emitting compiled files
+    "esModuleInterop": true, // Ensures compatibility with CommonJS modules
+    "module": "esnext", // Specifies the module system
+    "moduleResolution": "bundler", // Use bundler-friendly resolution
+    "resolveJsonModule": true, // Enables importing JSON files
+    "isolatedModules": true, // Required for Next.js
+    "jsx": "react-jsx", // Retains JSX in `.tsx` files for further processing by Next.js
+    "incremental": true, // Speeds up subsequent builds
+    "plugins": [
+      {
+        "name": "next" // Adds Next.js-specific type-checking support
+      }
+    ],
+    "paths": {
+      "@/*": [
+        "./*"
+      ] // Sets up custom module resolution paths
+    }
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.js", // Includes JavaScript files
+    "**/*.jsx", // Includes JSX files
+    ".next/types/**/*.ts",
+    "app/HomePage/layout.js" // Includes specific files
+    ,
+    "app/Preview/[id]",
+    ".next/dev/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ] // Excludes unnecessary files
+}

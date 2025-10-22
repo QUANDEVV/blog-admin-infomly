@@ -1,0 +1,1 @@
+npx -y next-devtools-mcp@latest get_errors
