@@ -5,24 +5,27 @@ import Link from "next/link"
 import { Menu } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useSidebar } from "@/components/ui/sidebar"
+import { ModeToggle } from "./mode-toggle"
 
 const Navbar = () => {
   const { toggleSidebar } = useSidebar()
 
   return (
     <>
-  <nav className="sticky top-0 z-10 bg-white bg-opacity-100  shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
+  <nav className="sticky top-0 z-10 w-full bg-sidebar text-sidebar-foreground shadow-sm">
+        <div className="  ">
+          <div className="flex items-center justify-between h-12 relative">
             {/* Mobile Menu Button (left-aligned) */}
-            <div className="md:hidden">
+            <div className="flex items-center gap-2">
               <button
                 onClick={toggleSidebar}
-                className="inline-flex items-center justify-center p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent focus:outline-none focus:ring-2 focus:ring-inset focus:ring-ring transition-colors"
+                className="inline-flex items-center justify-center p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent focus:outline-none focus:ring-2 focus:ring-inset focus:ring-ring transition-colors"
               >
                 <span className="sr-only">Toggle sidebar</span>
-                <Menu className="block h-6 w-6" aria-hidden="true" />
+                <Menu className="block h-5 w-5" aria-hidden="true" />
               </button>
+              {/* Mobile-visible compact mode toggle (removed) - we'll pin the toggle to the far right for all sizes */}
+              {/* (ModeToggle removed from here to avoid duplicate) */}
             </div>
 
             {/* Centered Navigation Links */}
@@ -49,7 +52,13 @@ const Navbar = () => {
                 </Link>
               ))}
             </div>
+
           </div>
+        </div>
+
+        {/* Absolute right-edge toggle for all sizes */}
+        <div className="absolute right-0 top-1/2 -translate-y-1/2 pr-4">
+          <ModeToggle />
         </div>
       </nav>
 

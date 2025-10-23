@@ -14,23 +14,25 @@ import {
 
 export function NavMain({
   items,
+  className,
 }: {
   items: {
     title: string
     url: string
     icon?: LucideIcon
   }[]
+  className?: string
 }) {
   const router = useRouter()
 
   return (
-    <SidebarGroup>
+    <SidebarGroup className={className}>
       <SidebarGroupContent className="flex flex-col gap-2">
       
         <SidebarMenu>
           {items.map((item) => (
             <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton tooltip={item.title}>
+              <SidebarMenuButton tooltip={item.title} onClick={() => router.push(item.url)}>
                 {item.icon && <item.icon />}
                 <span>{item.title}</span>
               </SidebarMenuButton>

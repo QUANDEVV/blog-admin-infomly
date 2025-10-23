@@ -6,6 +6,8 @@ import Script from "next/script";
 import { Geist, Geist_Mono } from "next/font/google"; // ✅ Import Fonts
 import { AppSidebar } from "@/components/app-sidebar";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
+import { ThemeProvider } from "@/components/theme-provider";
+import ThemeToggle from "@/components/theme-toggle";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,7 +32,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
 
         {/* ✅ Google AdSense Verification Meta Tag */}
@@ -65,14 +67,21 @@ export default function RootLayout({ children }) {
             "--header-height": "calc(var(--spacing) * 12)",
           }}
         >
-          <AppSidebar variant="inset" />
-          <SidebarInset>
-            <Navbar />
-            {children}
-          </SidebarInset>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <AppSidebar variant="inset" />
+            <SidebarInset>
+              <Navbar />
+              {children}
+            </SidebarInset>
+          </ThemeProvider>
         </SidebarProvider>
         <Analytics />
-        <Footer />
+        {/* <Footer /> */}
       </body>
     </html>
   );
