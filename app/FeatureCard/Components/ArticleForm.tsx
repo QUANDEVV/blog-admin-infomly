@@ -8,7 +8,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Maximize, Minimize } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { useCreateArticle, useUpdateArticle } from '@/hooks/Articles/useArticles'
+import { useCreateArticle, useUpdateArticle } from '@/hooks/FeatureCard/useArticles'
 import { useCategories } from '@/hooks/Categories/useCategories'
 
 interface ArticleFormProps {

@@ -4,7 +4,7 @@ import React from 'react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Edit, Trash2, Plus, Eye, ChevronDown, ChevronUp } from 'lucide-react'
-import { useArticles, useDeleteArticle } from '@/hooks/Articles/useArticles'
+import { useArticles, useDeleteArticle } from '@/hooks/FeatureCard/useArticles'
 import { z } from 'zod'
 import {
   DropdownMenu,
