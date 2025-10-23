@@ -57,36 +57,46 @@ const data = {
       url: "/",
       icon: LayoutDashboardIcon,
     },
+    // {
+    //   title: "Posts",
+    //   url: "/posts",
+    //   icon: FileTextIcon,
+    // },
     {
-      title: "Posts",
-      url: "/posts",
+      title: "Categories",
+      url: "/Categories",
+      icon: FolderIcon,
+    },
+    {
+      title: "Feature Card",
+      url: "/FeatureCard",
       icon: FileTextIcon,
     },
-    {
-      title: "Pages",
-      url: "/pages",
-      icon: FileIcon,
-    },
-    {
-      title: "Comments",
-      url: "/comments",
-      icon: ClipboardListIcon,
-    },
-    {
-      title: "Media",
-      url: "/media",
-      icon: CameraIcon,
-    },
-    {
-      title: "Users",
-      url: "/users",
-      icon: UsersIcon,
-    },
-    {
-      title: "Settings",
-      url: "/settings",
-      icon: SettingsIcon,
-    },
+    // {
+    //   title: "Pages",
+    //   url: "/pages",
+    //   icon: FileIcon,
+    // },
+    // {
+    //   title: "Comments",
+    //   url: "/comments",
+    //   icon: ClipboardListIcon,
+    // },
+    // {
+    //   title: "Media",
+    //   url: "/media",
+    //   icon: CameraIcon,
+    // },
+    // {
+    //   title: "Users",
+    //   url: "/users",
+    //   icon: UsersIcon,
+    // },
+    // {
+    //   title: "Settings",
+    //   url: "/settings",
+    //   icon: SettingsIcon,
+    // },
   ],
   navSecondary: [
     {
