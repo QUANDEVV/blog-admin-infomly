@@ -8,8 +8,9 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
 import { CalendarDays, Filter, Plus, Search } from 'lucide-react'
-import ArticleList from './ArticleList'
-import ArticleForm from './ArticleForm'
+import DisplayCardList from './DisplayCardList'
+import DisplayCardForm from './DisplayCardForm'
+import { useSubcategories } from '@/hooks/SubCategory/useSubcategories'
 import { useCategories } from '@/hooks/Categories/useCategories'
 import {
   Sheet,
@@ -20,10 +21,12 @@ import {
 } from '@/components/ui/sheet'
 
 const FeatureCard = () => {
+  const { subcategories } = useSubcategories()
   const { categories } = useCategories()
   const [editingArticle, setEditingArticle] = useState<any>(null)
   const [sheetOpen, setSheetOpen] = useState(false)
-  const [selectedCategory, setSelectedCategory] = useState('all')
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | undefined>(undefined)
+  const [selectedSubcategoryId, setSelectedSubcategoryId] = useState<string>('all')
   const [searchTerm, setSearchTerm] = useState('')
   const [sortBy, setSortBy] = useState('newest')
 
@@ -38,7 +41,7 @@ const FeatureCard = () => {
       {/* Header Section */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Feature Card Management</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Display Card Management</h1>
           <p className="text-muted-foreground">Manage your blog's featured articles with logistics precision</p>
         </div>
        
@@ -50,9 +53,9 @@ const FeatureCard = () => {
       {/* Main Content - full width table. Article form opens in a Sheet for better focus and scalability. */}
       <div className="space-y-6">
         <Card>
-      <CardHeader className="py-2 px-4">
+          <CardHeader className="py-2 px-4">
         <CardTitle className="flex items-center justify-between gap-4 py-0">
-              <span>Article Inventory</span>
+              <span>Display Card Inventory</span>
               <div className="flex flex-col sm:flex-row sm:items-center sm:gap-3">
                
                 {/* Compact toolbar: search + category + sort + buttons */}
@@ -71,20 +74,38 @@ const FeatureCard = () => {
                   </div>
 
                   <div className="hidden sm:block">
-                    <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                      <SelectTrigger className="h-8 w-40">
-                        <SelectValue placeholder="All Categories" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">All Categories</SelectItem>
-                        {categories?.map((category: { id: number; name: string }) => (
-                          <SelectItem key={category.id} value={category.id.toString()}>
-                            {category.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                      <Select value={selectedCategoryId} onValueChange={(v) => { setSelectedCategoryId(v); setSelectedSubcategoryId('all') }}>
+                        <SelectTrigger className="h-8 w-40">
+                          <SelectValue placeholder="All Categories" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {categories?.map((c: any) => (
+                            <SelectItem key={c.id} value={c.id?.toString()}>
+                              {c.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="hidden sm:block">
+                      <Select value={selectedSubcategoryId} onValueChange={setSelectedSubcategoryId}>
+                        <SelectTrigger className="h-8 w-40">
+                          <SelectValue placeholder="All Subcategories" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">All Subcategories</SelectItem>
+                          {(selectedCategoryId
+                            ? subcategories?.filter((sc: any) => String(sc.category?.id ?? sc.category_id) === selectedCategoryId)
+                            : subcategories
+                          )?.map((sc: any) => (
+                            <SelectItem key={sc.id} value={sc.id.toString()}>
+                              {sc.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
 
                   <div className="hidden sm:block">
                     <Select value={sortBy} onValueChange={setSortBy}>
@@ -100,30 +121,30 @@ const FeatureCard = () => {
                     </Select>
                   </div>
 
-                  <Button variant="ghost" size="sm" onClick={() => { setSelectedCategory('all'); setSearchTerm(''); setSortBy('newest') }}>
+                  <Button variant="ghost" size="sm" onClick={() => { setSelectedCategoryId(undefined); setSelectedSubcategoryId('all'); setSearchTerm(''); setSortBy('newest') }}>
                     Clear
                   </Button>
 
-                  <Button
+                    <Button
                     onClick={() => {
                       setEditingArticle(null)
                       setSheetOpen(true)
                     }}
                     size="sm"
                   >
-                    <Plus className="w-4 h-4 mr-2" /> New Feature Card
+                    <Plus className="w-4 h-4 mr-2" /> New Display Card
                   </Button>
                 </div>
               </div>
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
-            <ArticleList
-              onEdit={(article) => {
-                setEditingArticle(article)
+            <DisplayCardList
+              onEdit={(displayCard) => {
+                setEditingArticle(displayCard)
                 setSheetOpen(true)
               }}
-              filters={{ category: selectedCategory, search: searchTerm, sort: sortBy }}
+              filters={{ category: selectedCategoryId, subcategory: selectedSubcategoryId, search: searchTerm, sort: sortBy }}
             />
           </CardContent>
         </Card>
@@ -134,10 +155,10 @@ const FeatureCard = () => {
         {/* Wider sheet for editing articles: 720px on small screens, 820px on large */}
         <SheetContent side="left" className="w-full sm:w-[920px] lg:w-[1100px]">
           <SheetHeader>
-            <SheetTitle>{editingArticle ? 'Edit Feature Card' : 'Add Feature Card'}</SheetTitle>
+            <SheetTitle>{editingArticle ? 'Edit Display Card' : 'Add Display Card'}</SheetTitle>
           </SheetHeader>
           <div className="mt-4">
-            <ArticleForm onSuccess={handleSuccess} article={editingArticle} />
+            <DisplayCardForm onSuccess={handleSuccess} displayCard={editingArticle} />
           </div>
           <SheetClose />
         </SheetContent>

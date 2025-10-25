@@ -41,14 +41,14 @@ export function NavMain({
         </SidebarMenu>
           <SidebarMenu>
           <SidebarMenuItem className="flex items-center gap-2">
-            <SidebarMenuButton
+            {/* <SidebarMenuButton
               tooltip="Quick Create"
               className="min-w-8 bg-primary text-primary-foreground duration-200 ease-linear hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground"
               onClick={() => router.push("/CreatePosts")}
             >
               <PlusCircleIcon />
               <span>Post Blogs</span>
-            </SidebarMenuButton>
+            </SidebarMenuButton> */}
             <span
            
               className="h-9 w-9 "

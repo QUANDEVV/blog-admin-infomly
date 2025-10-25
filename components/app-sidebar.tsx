@@ -68,8 +68,13 @@ const data = {
       icon: FolderIcon,
     },
     {
-      title: "Feature Card",
-      url: "/FeatureCard",
+      title: "Subcategories",
+      url: "/SubCategory",
+      icon: ListIcon,
+    },
+    {
+      title: "Display Card",
+      url: "/DisplayCard",
       icon: FileTextIcon,
     },
     // {
@@ -99,11 +104,11 @@ const data = {
     // },
   ],
   navSecondary: [
-    {
-      title: "New Post",
-      url: "/CreatePosts",
-      icon: PlusCircleIcon,
-    },
+    // {
+    //   title: "New Post",
+    //   url: "/CreatePosts",
+    //   icon: PlusCircleIcon,
+    // },
     {
       title: "Search",
       url: "#",
