@@ -1,7 +1,7 @@
 import useSWR from 'swr';
 import { fetcher, get, post, put, del } from '@/lib/apiClient';
 
-const POSTS_API_BASE_PATH = '/articles'; // Adjust this to your actual backend API path for posts
+const POSTS_API_BASE_PATH = '/admin/articles'; // Adjust this to your actual backend API path for posts
 
 export function usePosts() {
   const { data, error, isLoading, mutate } = useSWR(POSTS_API_BASE_PATH, fetcher);
