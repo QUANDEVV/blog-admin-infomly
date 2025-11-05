@@ -68,6 +68,16 @@ const data = {
       icon: FolderIcon,
     },
     {
+      title: "Authors",
+      url: "/Authors",
+      icon: UsersIcon,
+    },
+    {
+      title: "Content",
+      url: "/CreateContent",
+      icon: FileTextIcon,
+    },
+    {
       title: "Subcategories",
       url: "/SubCategory",
       icon: ListIcon,

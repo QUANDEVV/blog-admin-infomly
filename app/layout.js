@@ -76,7 +76,11 @@ export default function RootLayout({ children }) {
             <AppSidebar variant="inset" />
             <SidebarInset>
               <Navbar />
-              {children}
+
+              <div className="mx-4 sm:mx-8 md:mx-16 lg:mx-32 xl:mx-64 font-sans mt-10">
+                {children}
+              </div>
+             
             </SidebarInset>
           </ThemeProvider>
         </SidebarProvider>
