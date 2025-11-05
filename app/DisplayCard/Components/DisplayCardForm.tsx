@@ -165,6 +165,21 @@ const DisplayCardForm: React.FC<DisplayCardFormProps> = ({ onSuccess, displayCar
             ) : null}
             <Input id="featuredImage" type="file" accept="image/*" onChange={(e) => {
               const file = e.target.files?.[0] || null
+              
+              // File size validation (50MB limit)
+              if (file && file.size > 50 * 1024 * 1024) {
+                alert('File size too large! Please select an image smaller than 50MB.')
+                e.target.value = '' // Clear the input
+                return
+              }
+              
+              // File type validation
+              if (file && !['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml'].includes(file.type)) {
+                alert('Invalid file type! Please select a JPEG, PNG, GIF, WebP, or SVG image.')
+                e.target.value = '' // Clear the input
+                return
+              }
+              
               setFeaturedImage(file)
               if (previewUrl && previewUrl.startsWith('blob:')) URL.revokeObjectURL(previewUrl)
               if (file) setPreviewUrl(URL.createObjectURL(file))
