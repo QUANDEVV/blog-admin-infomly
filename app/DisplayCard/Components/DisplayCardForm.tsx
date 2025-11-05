@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useCreateDisplayCard, useUpdateDisplayCard } from '@/hooks/FeatureCard/useDisplayCards'
 import { useSubcategories } from '@/hooks/SubCategory/useSubcategories'
 import { useCategories } from '@/hooks/Categories/useCategories'
+import { compressImage } from '@/utils/imageCompression'
 
 interface DisplayCardFormProps {
   onSuccess: () => void
@@ -163,27 +164,42 @@ const DisplayCardForm: React.FC<DisplayCardFormProps> = ({ onSuccess, displayCar
                 <img src={previewUrl} alt={title || 'Featured image'} className="w-40 h-24 object-cover rounded" />
               </div>
             ) : null}
-            <Input id="featuredImage" type="file" accept="image/*" onChange={(e) => {
+            <Input id="featuredImage" type="file" accept="image/*" onChange={async (e) => {
               const file = e.target.files?.[0] || null
               
-              // File size validation (50MB limit)
-              if (file && file.size > 50 * 1024 * 1024) {
+              if (!file) {
+                setFeaturedImage(null)
+                if (previewUrl && previewUrl.startsWith('blob:')) URL.revokeObjectURL(previewUrl)
+                setPreviewUrl(displayCard?.featured_image || null)
+                return
+              }
+              
+              // File size validation (50MB limit for original file)
+              if (file.size > 50 * 1024 * 1024) {
                 alert('File size too large! Please select an image smaller than 50MB.')
                 e.target.value = '' // Clear the input
                 return
               }
               
               // File type validation
-              if (file && !['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml'].includes(file.type)) {
+              if (!['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml'].includes(file.type)) {
                 alert('Invalid file type! Please select a JPEG, PNG, GIF, WebP, or SVG image.')
                 e.target.value = '' // Clear the input
                 return
               }
-              
-              setFeaturedImage(file)
-              if (previewUrl && previewUrl.startsWith('blob:')) URL.revokeObjectURL(previewUrl)
-              if (file) setPreviewUrl(URL.createObjectURL(file))
-              else setPreviewUrl(displayCard?.featured_image || null)
+
+              try {
+                // Compress the image if it's larger than 5MB
+                const finalFile = file.size > 5 * 1024 * 1024 ? await compressImage(file, 5) : file
+                
+                setFeaturedImage(finalFile)
+                if (previewUrl && previewUrl.startsWith('blob:')) URL.revokeObjectURL(previewUrl)
+                setPreviewUrl(URL.createObjectURL(finalFile))
+              } catch (error) {
+                console.error('Error processing image:', error)
+                alert('Error processing image. Please try a different file.')
+                e.target.value = '' // Clear the input
+              }
             }} />
           </div>
           <Button type="submit" disabled={loading}>{loading ? 'Saving...' : displayCard ? 'Update' : 'Create'}</Button>

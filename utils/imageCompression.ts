@@ -1,5 +1,5 @@
 // Image compression utility
-// Add this to your project: npm install browser-image-compression
+import imageCompression from 'browser-image-compression'
 
 export const compressImage = async (file: File, maxSizeMB = 5): Promise<File> => {
   const options = {
@@ -11,7 +11,6 @@ export const compressImage = async (file: File, maxSizeMB = 5): Promise<File> =>
   }
   
   try {
-    const { default: imageCompression } = await import('browser-image-compression')
     const compressedFile = await imageCompression(file, options)
     return compressedFile
   } catch (error) {
