@@ -13,6 +13,7 @@ import { User, Mail, FileText, Image, Globe, CheckCircle } from 'lucide-react'
 const AuthorForm = ({ onSuccess, author }) => {
   const [formData, setFormData] = useState({
     name: '',
+    slug: '',
     email: '',
     bio: '',
     avatar: '',
@@ -28,6 +29,7 @@ const AuthorForm = ({ onSuccess, author }) => {
     if (author) {
       setFormData({
         name: author.name || '',
+        slug: author.slug || '',
         email: author.email || '',
         bio: author.bio || '',
         avatar: author.avatar || '',
@@ -37,6 +39,7 @@ const AuthorForm = ({ onSuccess, author }) => {
     } else {
       setFormData({
         name: '',
+        slug: '',
         email: '',
         bio: '',
         avatar: '',
@@ -91,6 +94,7 @@ const AuthorForm = ({ onSuccess, author }) => {
         // Reset form for new author
         setFormData({
           name: '',
+          slug: '',
           email: '',
           bio: '',
           avatar: '',
@@ -144,6 +148,26 @@ const AuthorForm = ({ onSuccess, author }) => {
               placeholder="Enter author's full name"
               className="w-full"
             />
+          </div>
+
+          {/* Slug */}
+          <div className="space-y-2">
+            <Label htmlFor="slug" className="flex items-center">
+              <Globe className="mr-2 h-4 w-4" />
+              Slug *
+            </Label>
+            <Input
+              id="slug"
+              name="slug"
+              value={formData.slug}
+              onChange={handleChange}
+              required
+              placeholder="author-url-slug"
+              className="w-full"
+            />
+            <p className="text-xs text-muted-foreground">
+              URL-friendly version (e.g., john-doe)
+            </p>
           </div>
 
           {/* Email */}

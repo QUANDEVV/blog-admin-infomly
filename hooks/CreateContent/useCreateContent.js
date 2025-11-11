@@ -5,10 +5,12 @@ const CONTENTS_API_BASE_PATH = '/admin/contents'; // Backend API path for conten
 
 /**
  * Hook to fetch all contents for admin management
+ * @param {string} queryParams - Optional query parameters for filtering/sorting
  * @returns {Object} - Contains contents array, loading state, error state, and mutate function
  */
-export function useContents() {
-  const { data, error, isLoading, mutate } = useSWR(CONTENTS_API_BASE_PATH, fetcher);
+export function useContents(queryParams = '') {
+  const url = queryParams ? `${CONTENTS_API_BASE_PATH}?${queryParams}` : CONTENTS_API_BASE_PATH;
+  const { data, error, isLoading, mutate } = useSWR(url, fetcher);
 
   return {
     contents: data,

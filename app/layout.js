@@ -77,7 +77,7 @@ export default function RootLayout({ children }) {
             <SidebarInset>
               <Navbar />
 
-              <div className="mx-4 sm:mx-8 md:mx-16 lg:mx-32 xl:mx-64 font-sans mt-10">
+              <div className="flex-1 font-sans p-6 pt-4 ml-0 sm:ml-4 md:ml-8 lg:ml-[160px]">
                 {children}
               </div>
              

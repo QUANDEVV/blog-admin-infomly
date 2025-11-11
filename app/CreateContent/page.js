@@ -3,7 +3,7 @@ import ContentManager from './Components/ContentManager'
 
 const page = () => {
   return (
-    <div className="p-4">
+    <div>
       <ContentManager />
     </div>
   )

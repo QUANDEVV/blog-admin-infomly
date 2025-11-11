@@ -57,25 +57,20 @@ const data = {
       url: "/",
       icon: LayoutDashboardIcon,
     },
-    // {
-    //   title: "Posts",
-    //   url: "/posts",
-    //   icon: FileTextIcon,
-    // },
-    {
-      title: "Categories",
-      url: "/Categories",
-      icon: FolderIcon,
-    },
-    {
-      title: "Authors",
-      url: "/Authors",
-      icon: UsersIcon,
-    },
     {
       title: "Content",
       url: "/CreateContent",
       icon: FileTextIcon,
+    },
+    {
+      title: "Display Cards",
+      url: "/DisplayCard",
+      icon: FileIcon,
+    },
+    {
+      title: "Categories",
+      url: "/Categories",
+      icon: FolderIcon,
     },
     {
       title: "Subcategories",
@@ -83,29 +78,29 @@ const data = {
       icon: ListIcon,
     },
     {
-      title: "Display Card",
-      url: "/DisplayCard",
-      icon: FileTextIcon,
+      title: "Authors",
+      url: "/Authors",
+      icon: UsersIcon,
     },
-    // {
-    //   title: "Pages",
-    //   url: "/pages",
-    //   icon: FileIcon,
-    // },
-    // {
-    //   title: "Comments",
-    //   url: "/comments",
-    //   icon: ClipboardListIcon,
-    // },
+    {
+      title: "Analytics",
+      url: "/Stats",
+      icon: BarChartIcon,
+    },
+    {
+      title: "Revenue",
+      url: "/Revenue",
+      icon: DollarSignIcon,
+    },
+    {
+      title: "SEO Tools",
+      url: "/SEO",
+      icon: SearchIcon,
+    },
     // {
     //   title: "Media",
     //   url: "/media",
     //   icon: CameraIcon,
-    // },
-    // {
-    //   title: "Users",
-    //   url: "/users",
-    //   icon: UsersIcon,
     // },
     // {
     //   title: "Settings",
@@ -114,15 +109,10 @@ const data = {
     // },
   ],
   navSecondary: [
-    // {
-    //   title: "New Post",
-    //   url: "/CreatePosts",
-    //   icon: PlusCircleIcon,
-    // },
     {
-      title: "Search",
-      url: "#",
-      icon: SearchIcon,
+      title: "Settings",
+      url: "/settings",
+      icon: SettingsIcon,
     },
   ],
 }
