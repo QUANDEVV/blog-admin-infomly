@@ -190,7 +190,9 @@ const DisplayCardForm: React.FC<DisplayCardFormProps> = ({ onSuccess, displayCar
 
               try {
                 // Compress the image if it's larger than 5MB
-                const finalFile = file.size > 5 * 1024 * 1024 ? await compressImage(file, 5) : file
+                const finalFile = file.size > 5 * 1024 * 1024 
+                  ? await compressImage(file, { maxSizeMB: 0.5, maxWidthOrHeight: 1920 }) 
+                  : file
                 
                 setFeaturedImage(finalFile)
                 if (previewUrl && previewUrl.startsWith('blob:')) URL.revokeObjectURL(previewUrl)

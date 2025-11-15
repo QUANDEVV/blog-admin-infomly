@@ -8,6 +8,9 @@ export function useDisplayCards() {
 
   return {
     display_cards: data?.display_cards || [],
+    categories: data?.categories || [],
+    subcategories: data?.subcategories || [],
+    authors: data?.authors || [],
     isLoading,
     isError: error,
     mutate,

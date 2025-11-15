@@ -58,11 +58,6 @@ const data = {
       icon: LayoutDashboardIcon,
     },
     {
-      title: "Content",
-      url: "/CreateContent",
-      icon: FileTextIcon,
-    },
-    {
       title: "Display Cards",
       url: "/DisplayCard",
       icon: FileIcon,
@@ -71,11 +66,6 @@ const data = {
       title: "Categories",
       url: "/Categories",
       icon: FolderIcon,
-    },
-    {
-      title: "Subcategories",
-      url: "/SubCategory",
-      icon: ListIcon,
     },
     {
       title: "Authors",
