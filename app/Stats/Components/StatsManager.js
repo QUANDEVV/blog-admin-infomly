@@ -80,7 +80,7 @@ export default function StatsManager() {
                                       <div key={card.id} className="bg-secondary text-secondary-foreground px-2 py-1 rounded text-xs">
                                         <span className="font-medium">{card.title || `Card ${card.id}`}</span>
                                         <span className="ml-2 bg-primary text-primary-foreground px-1 py-0.5 rounded text-xs">
-                                          {card.content_id ? `C:${card.content_id}` : 'C:—'}
+                                          {card.content?.id ? `C:${card.content.id}` : 'C:—'}
                                         </span>
                                       </div>
                                     ))}

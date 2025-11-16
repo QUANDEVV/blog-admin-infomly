@@ -23,27 +23,19 @@ import RichTextEditor from '@/components/RichTextEditor'
  * - authors: Array of all authors (passed from parent)
  * - onSuccess: Callback when form is successfully submitted
  * 
- * This form handles both Display Card fields (presentation layer) and Content fields (data layer)
- * in a single interface, while maintaining separate backend tables for scalability.
+ * ARCHITECTURE (Updated):
+ * DisplayCard is the SOURCE OF TRUTH (parent entity) that contains:
+ * - title, excerpt, featured_image, subcategory_id, status, published_at, alt_text
  * 
- * Display Card Section:
- * - title: Main display title
- * - excerpt: Short preview text
- * - featured_image: Image for card display
- * - category_id: Primary category
- * - subcategory_id: Subcategory within category
- * - status: draft/published
+ * Content is the CHILD entity that belongs to DisplayCard (via display_card_id):
+ * - slug (SEO URL), content (article body), author_id
  * 
- * Content Section:
- * - content (body): Full article content
- * - author_id: Content author
- * - slug: URL-friendly identifier
- * 
- * Backend Integration:
- * - Auto-creates Content record when saving Display Card
- * - Links via content_id foreign key
- * - Both tables have status field for draft handling
- * - Content can be empty for draft Display Cards
+ * Backend Flow:
+ * 1. DisplayCard is created FIRST (parent)
+ * 2. Content is created second (child) - if content_body provided
+ * 3. Content.display_card_id references DisplayCard.id (foreign key)
+ * 4. All operations wrapped in DB transactions for data integrity
+ * 5. Deleting DisplayCard CASCADE deletes Content
  */
 const DisplayCardContentForm = ({ card, categories = [], subcategories = [], authors = [], onSuccess }) => {
   const isEditMode = !!card
@@ -234,10 +226,11 @@ const DisplayCardContentForm = ({ card, categories = [], subcategories = [], aut
       // Build FormData for Display Card (supports file upload)
       const formData = new FormData()
       
-      // Display Card fields
+      // DisplayCard fields - DisplayCard is the SOURCE OF TRUTH
       formData.append('title', title.trim())
       formData.append('excerpt', excerpt.trim() || '')
-      formData.append('category_id', categoryId)
+      // NOTE: category_id is NOT sent - backend only needs subcategory_id
+      // Category is accessed via: DisplayCard -> Subcategory -> Category
       formData.append('subcategory_id', subcategoryId)
       formData.append('status', status)
       
@@ -249,13 +242,13 @@ const DisplayCardContentForm = ({ card, categories = [], subcategories = [], aut
         formData.append('alt_text', altText)
       }
 
-      // Content fields (passed as form data for unified API)
+      // Content fields (Content belongs to DisplayCard)
+      // Content is created as a child record with display_card_id foreign key
       if (contentBody.trim()) {
         formData.append('content_body', contentBody.trim())
       }
       
-      // Always append author_id (even if empty) to avoid "Undefined array key" error
-      // Backend validation will handle whether it's required based on status
+      // Author ID for Content (required if publishing)
       formData.append('author_id', authorId || '')
       
       if (slug.trim()) {
@@ -335,7 +328,7 @@ const DisplayCardContentForm = ({ card, categories = [], subcategories = [], aut
           <div className="flex items-center gap-2">
             <ImageIcon className="h-5 w-5 text-primary" />
             <h3 className="text-lg font-semibold">Display Card Information</h3>
-            <Badge variant="outline" className="ml-auto">Presentation Layer</Badge>
+            <Badge variant="outline" className="ml-auto">Source of Truth</Badge>
           </div>
 
           {/* Title */}
@@ -517,7 +510,7 @@ const DisplayCardContentForm = ({ card, categories = [], subcategories = [], aut
           <div className="flex items-center gap-2">
             <FileText className="h-5 w-5 text-primary" />
             <h3 className="text-lg font-semibold">Content Details</h3>
-            <Badge variant="outline" className="ml-auto">Data Layer</Badge>
+            <Badge variant="outline" className="ml-auto">Article Body</Badge>
           </div>
 
           {/* Content Body */}

@@ -3,14 +3,24 @@ import { fetcher, get, post, put, del } from '@/lib/apiClient'
 
 const DISPLAY_CARDS_API_BASE = '/admin/display-cards'
 
-export function useDisplayCards() {
-  const { data, error, isLoading, mutate } = useSWR(DISPLAY_CARDS_API_BASE, fetcher)
+export function useDisplayCards(page = 1, perPage = null) {
+  // If perPage is provided, add it to URL, otherwise use backend default (15)
+  const url = perPage 
+    ? `${DISPLAY_CARDS_API_BASE}?page=${page}&per_page=${perPage}`
+    : `${DISPLAY_CARDS_API_BASE}?page=${page}`
+  const { data, error, isLoading, mutate } = useSWR(url, fetcher)
 
   return {
     display_cards: data?.display_cards || [],
     categories: data?.categories || [],
     subcategories: data?.subcategories || [],
     authors: data?.authors || [],
+    // Total words across all articles (number)
+    total_words: data?.total_words ?? 0,
+    // Additional stats object (total_word_count, total_published_articles, average_words_per_article)
+    stats: data?.stats || {},
+    // Pagination data
+    pagination: data?.pagination || { current_page: 1, last_page: 1, per_page: 15, total: 0 },
     isLoading,
     isError: error,
     mutate,

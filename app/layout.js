@@ -8,6 +8,7 @@ import { AppSidebar } from "@/components/app-sidebar";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { ThemeProvider } from "@/components/theme-provider";
 import ThemeToggle from "@/components/theme-toggle";
+import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -80,11 +81,12 @@ export default function RootLayout({ children }) {
               <div className="flex-1 font-sans p-6 pt-4 ml-0 sm:ml-4 md:ml-8 lg:ml-[160px]">
                 {children}
               </div>
-             
+
             </SidebarInset>
           </ThemeProvider>
         </SidebarProvider>
         <Analytics />
+        <Toaster />
         {/* <Footer /> */}
       </body>
     </html>

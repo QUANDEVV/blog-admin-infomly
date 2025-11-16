@@ -30,6 +30,7 @@ import {
   CookingPotIcon,
   PlaneIcon,
   PlusCircleIcon,
+  PenToolIcon,
 } from "lucide-react"
 
 import { NavMain } from "@/components/nav-main"
@@ -61,6 +62,11 @@ const data = {
       title: "Display Cards",
       url: "/DisplayCard",
       icon: FileIcon,
+    },
+    {
+      title: "Editor",
+      url: "/Editor",
+      icon: PenToolIcon,
     },
     {
       title: "Categories",

@@ -2,6 +2,7 @@
 
 import { MailIcon, PlusCircleIcon, type LucideIcon } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { useSidebar } from "@/components/ui/sidebar"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -24,6 +25,13 @@ export function NavMain({
   className?: string
 }) {
   const router = useRouter()
+  const { setOpenMobile } = useSidebar()
+
+  const handleNavClick = (url: string) => {
+    router.push(url)
+    // Close mobile sidebar after navigation
+    setOpenMobile(false)
+  }
 
   return (
     <SidebarGroup className={className}>
@@ -32,7 +40,7 @@ export function NavMain({
         <SidebarMenu>
           {items.map((item) => (
             <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton tooltip={item.title} onClick={() => router.push(item.url)}>
+              <SidebarMenuButton tooltip={item.title} onClick={() => handleNavClick(item.url)}>
                 {item.icon && <item.icon />}
                 <span>{item.title}</span>
               </SidebarMenuButton>
