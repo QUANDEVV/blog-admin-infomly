@@ -5,7 +5,7 @@ import ContentStudioSidebar from './ContentStudioSidebar'
 import LivePreviewPanel from './LivePreviewPanel'
 import TipTapEditor from './TipTapEditor'
 import { Button } from '@/components/ui/button'
-import { Eye, Edit, Save, X } from 'lucide-react'
+import { Eye, Edit, Save, X, Menu, Maximize2, Minimize2 } from 'lucide-react'
 import { apiFetch, put } from '@/lib/apiClient'
 import { useSWRConfig } from 'swr'
 
@@ -25,12 +25,15 @@ const EditorManager = () => {
     const [selectedContent, setSelectedContent] = useState(null)
     const [isEditMode, setIsEditMode] = useState(false)
     const [editedContent, setEditedContent] = useState('')
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false) // Mobile sidebar toggle
+    const [isFocusMode, setIsFocusMode] = useState(false) // Focus mode for distraction-free reading
     const { mutate } = useSWRConfig()
 
     const handleContentSelect = (content) => {
         setSelectedContent(content)
         setIsEditMode(false) // Reset to preview mode when selecting new content
         setEditedContent(content?.content?.content || '')
+        setIsSidebarOpen(false) // Close sidebar on mobile after selection
     }
 
     const handleEditMode = () => {
@@ -99,59 +102,126 @@ const EditorManager = () => {
     return (
         <div className="h-screen flex flex-col">
             {/* Studio Header - STICKY */}
-            <div className="sticky top-0 z-50 border-b bg-background px-6 py-4 flex items-center justify-between shadow-sm">
-                <div>
-                    <h1 className="text-2xl font-bold">Content Studio</h1>
-                    <p className="text-sm text-muted-foreground">
-                        {isEditMode ? 'Editing content with live preview' : 'Select content to preview how it will appear on your blog'}
-                    </p>
-                </div>
+            {!isFocusMode && (
+                <div className="sticky top-0 z-50 border-b bg-background px-4 md:px-6 py-3 md:py-4 flex items-center justify-between shadow-sm">
+                    <div className="flex items-center gap-3">
+                        {/* Mobile Menu Toggle */}
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            className="md:hidden"
+                            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                        >
+                            <Menu className="h-5 w-5" />
+                        </Button>
 
-                {/* Edit Mode Controls */}
-                {selectedContent && (
+                        <div>
+                            <h1 className="text-lg md:text-2xl font-bold">Content Studio</h1>
+                            <p className="text-xs md:text-sm text-muted-foreground hidden sm:block">
+                                {isEditMode ? 'Editing content with live preview' : 'Select content to preview how it will appear on your blog'}
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Controls */}
                     <div className="flex items-center gap-2">
-                        {!isEditMode ? (
-                            <Button onClick={handleEditMode} className="gap-2">
-                                <Edit className="h-4 w-4" />
-                                Edit Content
+                        {/* Focus Mode Toggle */}
+                        {selectedContent && !isEditMode && (
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => setIsFocusMode(!isFocusMode)}
+                                className="gap-2 hidden md:flex"
+                            >
+                                <Maximize2 className="h-4 w-4" />
+                                <span className="hidden lg:inline">Focus</span>
                             </Button>
-                        ) : (
-                            <>
-                                <Button variant="outline" onClick={handleCancelEdit} className="gap-2">
-                                    <X className="h-4 w-4" />
-                                    Cancel
+                        )}
+
+                        {/* Edit Mode Controls */}
+                        {selectedContent && (
+                            !isEditMode ? (
+                                <Button onClick={handleEditMode} className="gap-2" size="sm">
+                                    <Edit className="h-4 w-4" />
+                                    <span className="hidden sm:inline">Edit Content</span>
                                 </Button>
-                                <Button onClick={handleSave} className="gap-2" data-save-button>
-                                    <Save className="h-4 w-4" />
-                                    Save Changes
-                                </Button>
-                            </>
+                            ) : (
+                                <>
+                                    <Button variant="outline" onClick={handleCancelEdit} className="gap-2" size="sm">
+                                        <X className="h-4 w-4" />
+                                        <span className="hidden sm:inline">Cancel</span>
+                                    </Button>
+                                    <Button onClick={handleSave} className="gap-2" data-save-button size="sm">
+                                        <Save className="h-4 w-4" />
+                                        <span className="hidden sm:inline">Save</span>
+                                    </Button>
+                                </>
+                            )
                         )}
                     </div>
-                )}
-            </div>
+                </div>
+            )}
 
             {/* Split Screen Layout */}
-            <div className="flex-1 flex overflow-hidden">
-                {/* Left Panel: Content Library (30%) */}
-                <div className="w-[30%] border-r bg-muted/30 overflow-y-auto">
+            <div className="flex-1 flex overflow-hidden relative">
+                {/* Left Panel: Content Library - Hidden on mobile by default, shown as overlay when opened */}
+                <div
+                    className={`
+                        ${isFocusMode ? 'hidden' : ''}
+                        w-full md:w-[340px] lg:w-[380px] border-r bg-muted/30 overflow-y-auto
+                        fixed md:static inset-0 z-40 md:z-auto
+                        transition-transform duration-300 ease-in-out
+                        ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+                    `}
+                >
+                    {/* Mobile Sidebar Header */}
+                    <div className="md:hidden sticky top-0 z-10 bg-background border-b px-4 py-3 flex items-center justify-between">
+                        <h2 className="font-semibold">Select Content</h2>
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => setIsSidebarOpen(false)}
+                        >
+                            <X className="h-5 w-5" />
+                        </Button>
+                    </div>
+
                     <ContentStudioSidebar
                         onContentSelect={handleContentSelect}
                         selectedContentId={selectedContent?.id}
                     />
                 </div>
 
-                {/* Right Panel: Preview OR Editor+Preview (70%) */}
+                {/* Overlay for mobile sidebar */}
+                {isSidebarOpen && (
+                    <div
+                        className="fixed inset-0 bg-black/50 z-30 md:hidden"
+                        onClick={() => setIsSidebarOpen(false)}
+                    />
+                )}
+
+                {/* Right Panel: Preview OR Editor+Preview */}
                 <div className="flex-1 flex overflow-hidden">
                     {!isEditMode ? (
                         /* Preview Only Mode */
-                        <div className="flex-1 bg-background overflow-y-auto">
+                        <div className="flex-1 bg-background overflow-y-auto relative">
+                            {/* Focus Mode Exit Button */}
+                            {isFocusMode && (
+                                <Button
+                                    variant="outline"
+                                    size="icon"
+                                    className="fixed top-4 right-4 z-50 shadow-lg"
+                                    onClick={() => setIsFocusMode(false)}
+                                >
+                                    <Minimize2 className="h-4 w-4" />
+                                </Button>
+                            )}
                             <LivePreviewPanel content={selectedContent} />
                         </div>
                     ) : (
-                        /* Edit Mode: Split Editor + Preview */
+                        /* Edit Mode: Split Editor + Preview (desktop only, mobile shows editor only) */
                         <>
-                            {/* Editor (50% of right panel) */}
+                            {/* Editor */}
                             <div className="flex-1 border-r bg-background flex flex-col">
                                 <div className="sticky top-0 z-10 bg-background border-b px-4 py-3">
                                     <div className="flex items-center gap-2">
@@ -169,8 +239,8 @@ const EditorManager = () => {
                                 </div>
                             </div>
 
-                            {/* Live Preview (50% of right panel) */}
-                            <div className="flex-1 bg-muted/20 flex flex-col">
+                            {/* Live Preview - Hidden on mobile in edit mode */}
+                            <div className="hidden lg:flex flex-1 bg-muted/20 flex-col">
                                 <div className="sticky top-0 z-10 bg-background border-b px-4 py-3">
                                     <div className="flex items-center gap-2">
                                         <Eye className="h-4 w-4 text-muted-foreground" />

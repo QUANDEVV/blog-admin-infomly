@@ -854,6 +854,7 @@ body {
 @media (max-width: 768px) {
   .blog-content {
     font-size: 1rem; /* 16px on mobile */
+    line-height: 1.75;
   }
   
   .blog-content h1 {
@@ -864,6 +865,7 @@ body {
   .blog-content h2 {
     font-size: 1.625rem; /* 26px */
     margin-top: 2.5rem;
+    padding-bottom: 0.5rem;
   }
   
   .blog-content h3 {
@@ -871,22 +873,53 @@ body {
     margin-top: 2rem;
   }
   
+  .blog-content h4 {
+    font-size: 1.125rem; /* 18px */
+    margin-top: 1.5rem;
+  }
+  
+  .blog-content p {
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
   .blog-content blockquote {
     padding: 1rem 1.25rem;
     font-size: 1.0625rem;
+    margin: 2rem 0;
   }
   
   .blog-content ul,
   .blog-content ol {
     padding-left: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .blog-content li {
+    margin-bottom: 0.625rem;
+    font-size: 1rem;
   }
   
   .blog-content table {
     font-size: 0.875rem;
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
   
   .blog-content th,
   .blog-content td {
     padding: 0.75rem;
+  }
+  
+  .blog-content pre {
+    padding: 1rem;
+    margin: 1.5rem -1rem; /* Bleed on mobile for code blocks */
+    border-radius: 0;
+  }
+  
+  .blog-content img {
+    margin: 1.5rem -1rem; /* Full width images on mobile */
+    border-radius: 0;
   }
 }
