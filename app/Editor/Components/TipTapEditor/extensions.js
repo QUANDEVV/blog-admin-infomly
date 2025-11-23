@@ -34,6 +34,11 @@ export const getExtensions = (onImageClick) => [
             keepMarks: true,
             keepAttributes: false,
         },
+        // Disable table-related nodes in StarterKit to avoid conflicts
+        table: false,
+        tableRow: false,
+        tableCell: false,
+        tableHeader: false,
     }),
     Underline,
     Highlight.configure({
@@ -63,20 +68,36 @@ export const getExtensions = (onImageClick) => [
         HTMLAttributes: {
             class: 'tiptap-table',
         },
+        // Ensure tables are always rendered as HTML, never as plain text
+        renderHTML({ HTMLAttributes }) {
+            return ['table', HTMLAttributes, ['tbody', 0]]
+        },
     }),
     TableRow.configure({
         HTMLAttributes: {
             class: 'tiptap-table-row',
+        },
+        // Ensure rows are always rendered as HTML
+        renderHTML({ HTMLAttributes }) {
+            return ['tr', HTMLAttributes, 0]
         },
     }),
     TableHeader.configure({
         HTMLAttributes: {
             class: 'tiptap-table-header',
         },
+        // Ensure headers are always rendered as HTML
+        renderHTML({ HTMLAttributes }) {
+            return ['th', HTMLAttributes, 0]
+        },
     }),
     TableCell.configure({
         HTMLAttributes: {
             class: 'tiptap-table-cell',
+        },
+        // Ensure cells are always rendered as HTML
+        renderHTML({ HTMLAttributes }) {
+            return ['td', HTMLAttributes, 0]
         },
     }),
     Placeholder.configure({

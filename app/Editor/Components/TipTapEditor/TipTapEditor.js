@@ -49,6 +49,11 @@ const TipTapEditor = ({
         editorProps: getEditorProps(),
         onUpdate: ({ editor }) => {
             const html = editor.getHTML()
+            console.log('📝 Editor HTML Output:', html.substring(0, 500)) // Log first 500 chars
+            // Check if tables exist
+            if (html.includes('<table')) {
+                console.log('✅ Table detected in HTML output')
+            }
             onChange?.(html)
         },
     })

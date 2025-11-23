@@ -45,47 +45,54 @@ export default function EditMediaDialog({ media, isOpen, onClose, onSuccess, isF
     const handleUpdate = async () => {
         setIsUpdating(true)
         try {
-            // If there's a selected file, replace it first
+            // If a file is selected, it means we are replacing the file
             if (selectedFile) {
                 const formData = new FormData()
 
-                if (isFeaturedImage && articleId) {
-                    // Replace featured image using dedicated endpoint
-                    console.log('🎯 REPLACING FEATURED IMAGE:', {
-                        articleId,
-                        fileName: selectedFile.name,
-                        fileSize: selectedFile.size,
-                        altText
-                    })
+                if (isFeaturedImage) {
+                    console.log('🚀 Starting Featured Image Update...')
+                    console.log('Article ID:', articleId)
 
-                    // Append file with key 'file' as expected by MediaController@updateFeaturedImage
+                    if (!articleId) {
+                        throw new Error('Article ID is missing for featured image update')
+                    }
+
                     formData.append('file', selectedFile)
+                    // Use the current altText state for the featured image
                     formData.append('alt_text', altText || '')
 
-                    // Use the dedicated endpoint defined in routes/api.php
+                    // Use the dedicated endpoint for featured images
+                    console.log('📡 Sending request to: /admin/media/featured-image/' + articleId)
+
                     const response = await apiFetch(`/admin/media/featured-image/${articleId}`, {
                         method: 'POST',
                         body: formData,
                     })
 
-                    console.log('✅ FEATURED IMAGE REPLACED:', response)
+                    console.log('✅ Success Response:', response)
 
-                    // Update local preview immediately
                     if (response.url) {
                         setPreviewUrl(response.url)
                     }
-                } else if (!isFeaturedImage && media.id) {
-                    // Replace media file
+                    toast.success('Featured image replaced successfully')
+
+                } else {
+                    // Regular media replacement
+                    console.log('🚀 Starting Media File Replace...')
+                    console.log('Media ID:', media.id)
+
                     formData.append('file', selectedFile)
                     formData.append('media_id', media.id)
 
-                    await apiFetch('/admin/media/replace', {
+                    const response = await apiFetch('/admin/media/replace', {
                         method: 'POST',
                         body: formData,
                     })
-                }
 
-                toast.success(isFeaturedImage ? 'Featured image replaced successfully' : 'File replaced successfully')
+                    console.log('✅ Success Response:', response)
+                    toast.success('File replaced successfully')
+                }
+                setSelectedFile(null); // Clear selected file after successful upload
             } else {
                 // Just update metadata without replacing file
                 if (isFeaturedImage) {
@@ -98,16 +105,16 @@ export default function EditMediaDialog({ media, isOpen, onClose, onSuccess, isF
                         caption: caption,
                     })
                 }
-
-                toast.success('Media updated successfully')
+                toast.success('Media metadata updated successfully')
             }
 
-            onSuccess?.()
+            onSuccess?.() // Call onSuccess regardless of file replacement or metadata update
+            onClose(); // Close the dialog after successful update
         } catch (error) {
+            console.error('❌ Update Failed:', error)
             toast.error(error.message || 'Failed to update media')
         } finally {
             setIsUpdating(false)
-            setSelectedFile(null)
         }
     }
 
