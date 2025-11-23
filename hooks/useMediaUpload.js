@@ -45,7 +45,12 @@ export const useMediaUpload = () => {
 
             if (data.url) {
                 toast.success('Image uploaded successfully')
-                return data.url
+                // Return both URL (for backward compatibility) and media_id (for tracking)
+                return {
+                    url: data.url,
+                    mediaId: data.media_id, // Now stored in database
+                    metadata: data.metadata // File size, type, etc.
+                }
             }
         } catch (error) {
             console.error('Upload error:', error)

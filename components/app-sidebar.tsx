@@ -50,7 +50,7 @@ const data = {
   user: {
     name: "Admin User",
     email: "admin@infomly.com",
-    avatar: "/avatars/shadcn.jpg",
+    avatar: "/avatar.png",
   },
   navMain: [
     {
@@ -67,6 +67,11 @@ const data = {
       title: "Editor",
       url: "/Editor",
       icon: PenToolIcon,
+    },
+    {
+      title: "Media",
+      url: "/Media",
+      icon: CameraIcon,
     },
     {
       title: "Categories",
@@ -93,16 +98,6 @@ const data = {
       url: "/SEO",
       icon: SearchIcon,
     },
-    // {
-    //   title: "Media",
-    //   url: "/media",
-    //   icon: CameraIcon,
-    // },
-    // {
-    //   title: "Settings",
-    //   url: "/settings",
-    //   icon: SettingsIcon,
-    // },
   ],
   navSecondary: [
     {

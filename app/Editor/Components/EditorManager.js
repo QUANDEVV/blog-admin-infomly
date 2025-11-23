@@ -234,7 +234,7 @@ const EditorManager = () => {
                                         value={editedContent}
                                         onChange={setEditedContent}
                                         placeholder="Start writing your content..."
-                                        articleId={selectedContent?.content?.id}
+                                        articleId={selectedContent?.id}
                                     />
                                 </div>
                             </div>

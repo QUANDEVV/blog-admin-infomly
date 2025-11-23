@@ -12,15 +12,16 @@
 import StarterKit from '@tiptap/starter-kit'
 import Underline from '@tiptap/extension-underline'
 import Link from '@tiptap/extension-link'
-import Image from '@tiptap/extension-image'
+import Highlight from '@tiptap/extension-highlight'
 import Youtube from '@tiptap/extension-youtube'
 import { Table } from '@tiptap/extension-table'
 import { TableCell } from '@tiptap/extension-table-cell'
 import { TableHeader } from '@tiptap/extension-table-header'
 import { TableRow } from '@tiptap/extension-table-row'
 import Placeholder from '@tiptap/extension-placeholder'
+import { EditableImage } from './ImageExtension'
 
-export const extensions = [
+export const getExtensions = (onImageClick) => [
     StarterKit.configure({
         heading: {
             levels: [1, 2, 3, 4],
@@ -35,17 +36,21 @@ export const extensions = [
         },
     }),
     Underline,
+    Highlight.configure({
+        multicolor: true, // Allow multiple colors
+    }),
     Link.configure({
         openOnClick: false,
         HTMLAttributes: {
             class: 'text-primary underline underline-offset-4',
         },
     }),
-    Image.configure({
+    EditableImage.configure({
         HTMLAttributes: {
-            class: 'rounded-lg border border-border',
+            class: 'rounded-lg border border-border cursor-pointer hover:shadow-lg transition-shadow',
         },
         allowBase64: false, // Force upload
+        onImageClick, // Pass the callback
     }),
     Youtube.configure({
         controls: false,
@@ -56,12 +61,24 @@ export const extensions = [
     Table.configure({
         resizable: true,
         HTMLAttributes: {
-            class: 'border-collapse table-auto w-full',
+            class: 'tiptap-table',
         },
     }),
-    TableRow,
-    TableHeader,
-    TableCell,
+    TableRow.configure({
+        HTMLAttributes: {
+            class: 'tiptap-table-row',
+        },
+    }),
+    TableHeader.configure({
+        HTMLAttributes: {
+            class: 'tiptap-table-header',
+        },
+    }),
+    TableCell.configure({
+        HTMLAttributes: {
+            class: 'tiptap-table-cell',
+        },
+    }),
     Placeholder.configure({
         placeholder: 'Start writing your masterpiece...',
         emptyEditorClass: 'is-editor-empty',
