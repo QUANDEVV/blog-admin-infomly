@@ -780,6 +780,110 @@ body {
 }
 
 /* ═══════════════════════════════════════════════════════════════
+   TIPTAP TABLE STYLES
+   Specific styles for tables created in TipTap editor
+   ─────────────────────────────────────────────────────────────────
+   These classes are applied by TipTap extensions automatically.
+   This ensures tables render correctly in both editor and preview.
+   ═══════════════════════════════════════════════════════════════ */
+
+.blog-content .tiptap-table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 2rem 0;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  display: table;
+}
+
+.dark .blog-content .tiptap-table {
+  border-color: #374151;
+}
+
+.blog-content .tiptap-table-row {
+  border-bottom: 1px solid #e5e7eb;
+  display: table-row;
+}
+
+.dark .blog-content .tiptap-table-row {
+  border-bottom-color: #374151;
+}
+
+.blog-content .tiptap-table-row:last-child {
+  border-bottom: none;
+}
+
+/* TipTap table header cells */
+.blog-content .tiptap-table-header {
+  background-color: #3b82f6;
+  color: white;
+  font-weight: 600;
+  text-align: left;
+  padding: 0.75rem 1rem;
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 2px solid #2563eb;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.dark .blog-content .tiptap-table-header {
+  background-color: #1e40af;
+  border-right-color: rgba(255, 255, 255, 0.1);
+  border-bottom-color: #1e3a8a;
+}
+
+.blog-content .tiptap-table-header:last-child {
+  border-right: none;
+}
+
+/* TipTap table data cells */
+.blog-content .tiptap-table-cell {
+  padding: 0.75rem 1rem;
+  border-right: 1px solid #e5e7eb;
+  border-bottom: 1px solid #e5e7eb;
+  vertical-align: top;
+  color: #374151;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  display: table-cell;
+  background-color: white;
+}
+
+.dark .blog-content .tiptap-table-cell {
+  border-right-color: #374151;
+  border-bottom-color: #374151;
+  color: #d1d5db;
+  background-color: #1f2937;
+}
+
+.blog-content .tiptap-table-cell:last-child {
+  border-right: none;
+}
+
+/* Zebra striping for TipTap tables */
+.blog-content .tiptap-table-row:nth-child(even) .tiptap-table-cell {
+  background-color: #f9fafb;
+}
+
+.dark .blog-content .tiptap-table-row:nth-child(even) .tiptap-table-cell {
+  background-color: #111827;
+}
+
+/* Hover effect for TipTap table rows */
+.blog-content .tiptap-table-row:hover .tiptap-table-cell {
+  background-color: #eff6ff;
+}
+
+.dark .blog-content .tiptap-table-row:hover .tiptap-table-cell {
+  background-color: #1e3a5f;
+}
+
+/* ═══════════════════════════════════════════════════════════════
    VIDEOS & IFRAMES
    Responsive embeds
    ═══════════════════════════════════════════════════════════════ */

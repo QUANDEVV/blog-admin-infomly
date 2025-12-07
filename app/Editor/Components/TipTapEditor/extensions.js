@@ -63,42 +63,38 @@ export const getExtensions = (onImageClick) => [
         width: 640,
         height: 480,
     }),
+    /**
+     * Table Extension Configuration
+     * ─────────────────────────────────────────────────────────────
+     * IMPORTANT: Use default TipTap renderHTML to properly handle
+     * table structure with both thead and tbody sections.
+     * Custom renderHTML was causing tables to lose content on save/reload
+     * because it only outputted tbody, ignoring thead for header rows.
+     */
     Table.configure({
         resizable: true,
         HTMLAttributes: {
             class: 'tiptap-table',
         },
-        // Ensure tables are always rendered as HTML, never as plain text
-        renderHTML({ HTMLAttributes }) {
-            return ['table', HTMLAttributes, ['tbody', 0]]
-        },
+        // Let TipTap handle the HTML rendering natively for proper table structure
     }),
     TableRow.configure({
         HTMLAttributes: {
             class: 'tiptap-table-row',
         },
-        // Ensure rows are always rendered as HTML
-        renderHTML({ HTMLAttributes }) {
-            return ['tr', HTMLAttributes, 0]
-        },
+        // Let TipTap handle the HTML rendering natively
     }),
     TableHeader.configure({
         HTMLAttributes: {
             class: 'tiptap-table-header',
         },
-        // Ensure headers are always rendered as HTML
-        renderHTML({ HTMLAttributes }) {
-            return ['th', HTMLAttributes, 0]
-        },
+        // Let TipTap handle the HTML rendering natively
     }),
     TableCell.configure({
         HTMLAttributes: {
             class: 'tiptap-table-cell',
         },
-        // Ensure cells are always rendered as HTML
-        renderHTML({ HTMLAttributes }) {
-            return ['td', HTMLAttributes, 0]
-        },
+        // Let TipTap handle the HTML rendering natively
     }),
     Placeholder.configure({
         placeholder: 'Start writing your masterpiece...',
