@@ -30,13 +30,17 @@ export default function PwaManager() {
     })
 
     const fetchArticleDetails = async (url) => {
+        if (!url || url.length < 10) return;
+
         // Regex to extract year/month/day/slug from /2025/12/07/slug
         const match = url.match(/\/(\d{4})\/(\d{2})\/(\d{2})\/([A-Za-z0-9\-_]+)/);
         if (match) {
             const [_, year, month, day, slug] = match;
             try {
+                toast.loading("Fetching article details...", { id: 'autofill' });
                 // We use the public blog API to fetch article details
                 const data = await fetch(`https://backend.infomly.com/api/blog/${year}/${month}/${day}/${slug}`).then(res => res.json());
+
                 if (data && data.content) {
                     const article = data.content;
                     setForm(prev => ({
@@ -45,10 +49,13 @@ export default function PwaManager() {
                         body: article.displayCard?.description || article.summary || prev.body,
                         image: article.displayCard?.image_url || prev.image
                     }));
-                    toast.success("Magic! Article details auto-filled.");
+                    toast.success("Magic! Article details auto-filled.", { id: 'autofill' });
+                } else {
+                    toast.error("Article not found. Check the URL.", { id: 'autofill' });
                 }
             } catch (err) {
                 console.error("Failed to auto-fill article details:", err);
+                toast.error("Failed to auto-fill. Try manually entering.", { id: 'autofill' });
             }
         }
     }
@@ -157,27 +164,39 @@ export default function PwaManager() {
                             <div className="space-y-2">
                                 <Label htmlFor="url">Action URL (slug)</Label>
                                 <div className="flex gap-2">
-                                    <span className="inline-flex items-center px-3 rounded-md border border-input bg-muted text-muted-foreground text-sm">
-                                        /
-                                    </span>
-                                    <Input
-                                        id="url"
-                                        placeholder="2025/12/article-slug"
-                                        value={form.url === '/' ? '' : form.url.replace(/^\//, '')}
-                                        onChange={(e) => {
-                                            let val = e.target.value;
-                                            // If they paste a full URL, strip the domain
-                                            if (val.includes('infomly.com/')) {
-                                                val = val.split('infomly.com/')[1];
-                                            }
-                                            const newUrl = '/' + val.replace(/^\//, '');
-                                            setForm({ ...form, url: newUrl });
-                                            // Trigger magic auto-fill
-                                            if (newUrl.length > 10) fetchArticleDetails(newUrl);
-                                        }}
-                                    />
+                                    <div className="flex flex-1 gap-2">
+                                        <span className="inline-flex items-center px-3 rounded-md border border-input bg-muted text-muted-foreground text-sm">
+                                            /
+                                        </span>
+                                        <Input
+                                            id="url"
+                                            placeholder="2025/12/article-slug"
+                                            className="flex-1"
+                                            value={form.url === '/' ? '' : form.url.replace(/^\//, '')}
+                                            onChange={(e) => {
+                                                let val = e.target.value;
+                                                // If they paste a full URL, strip the domain
+                                                if (val.includes('infomly.com/')) {
+                                                    val = val.split('infomly.com/')[1];
+                                                }
+                                                const newUrl = '/' + val.replace(/^\//, '');
+                                                setForm({ ...form, url: newUrl });
+                                                // Trigger magic auto-fill
+                                                if (newUrl.length > 10) fetchArticleDetails(newUrl);
+                                            }}
+                                        />
+                                    </div>
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        size="icon"
+                                        onClick={() => fetchArticleDetails(form.url)}
+                                        title="Power Fill from URL"
+                                    >
+                                        <RefreshCwIcon className="h-4 w-4" />
+                                    </Button>
                                 </div>
-                                <p className="text-[10px] text-muted-foreground">Where the user lands when they click the notification. Pasting an article link will auto-fill the form!</p>
+                                <p className="text-[10px] text-muted-foreground">Pasting an article link will auto-fill the form! Use the refresh button to re-fetch.</p>
                             </div>
 
                             <div className="space-y-2">
