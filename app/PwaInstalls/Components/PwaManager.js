@@ -11,6 +11,8 @@ import {
     GlobeIcon,
     LaptopIcon
 } from "lucide-react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
@@ -33,31 +35,34 @@ export default function PwaManager() {
     const fetchArticleDetails = async (url) => {
         if (!url || url.length < 10) return;
 
-        // Regex to extract year/month/day/slug from /2025/12/07/slug
-        const match = url.match(/\/(\d{4})\/(\d{2})\/(\d{2})\/([A-Za-z0-9\-_]+)/);
+        // More robust slug extraction: handle infomly.com/2025/12/01/slug
+        const slugPattern = /(\d{4})\/(\d{2})\/(\d{2})\/([A-Za-z0-9\-_]+)/;
+        const match = url.match(slugPattern);
+
         if (match) {
             const [_, year, month, day, slug] = match;
             try {
                 setIsAutoFilling(true);
-                toast.loading("Magic Sync: Fetching blog content...", { id: 'autofill' });
-                // We use the public blog API to fetch article details
+                toast.loading("Magic Sync: Fetching blog details...", { id: 'autofill' });
+
                 const data = await fetch(`https://backend.infomly.com/api/blog/${year}/${month}/${day}/${slug}`).then(res => res.json());
 
                 if (data && data.content) {
                     const article = data.content;
-                    setForm(prev => ({
-                        ...prev,
-                        title: article.displayCard?.title || article.title || prev.title,
-                        body: article.displayCard?.description || article.summary || prev.body,
-                        image: article.displayCard?.image_url || prev.image
-                    }));
-                    toast.success("Ready! Blog title and image synced.", { id: 'autofill' });
+                    const card = article.display_card; // API uses snake_case
+                    setForm({
+                        title: card?.title || article.title || "New Update",
+                        body: card?.excerpt || article.summary || "Tap to read more.",
+                        url: `/${year}/${month}/${day}/${slug}`,
+                        image: card?.featured_image || null
+                    });
+                    toast.success("Ready! Title and Image synced.", { id: 'autofill' });
                 } else {
-                    toast.error("Article not found. Check the URL.", { id: 'autofill' });
+                    toast.error("Blog not found. Please check the link.", { id: 'autofill' });
                 }
             } catch (err) {
-                console.error("Failed to auto-fill article details:", err);
-                toast.error("Cloud Error: Try manually entering.", { id: 'autofill' });
+                console.error("Failed to auto-fill:", err);
+                toast.error("Sync Error: Try a different link.", { id: 'autofill' });
             } finally {
                 setIsAutoFilling(false);
             }
