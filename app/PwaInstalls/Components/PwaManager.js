@@ -25,8 +25,33 @@ export default function PwaManager() {
     const [form, setForm] = useState({
         title: 'New Update in Infomly Lab!',
         body: 'Check out the latest insights we just published.',
-        url: '/'
+        url: '/',
+        image: ''
     })
+
+    const fetchArticleDetails = async (url) => {
+        // Regex to extract year/month/day/slug from /2025/12/07/slug
+        const match = url.match(/\/(\d{4})\/(\d{2})\/(\d{2})\/([A-Za-z0-9\-_]+)/);
+        if (match) {
+            const [_, year, month, day, slug] = match;
+            try {
+                // We use the public blog API to fetch article details
+                const data = await fetch(`https://backend.infomly.com/api/blog/${year}/${month}/${day}/${slug}`).then(res => res.json());
+                if (data && data.content) {
+                    const article = data.content;
+                    setForm(prev => ({
+                        ...prev,
+                        title: article.displayCard?.title || article.title || prev.title,
+                        body: article.displayCard?.description || article.summary || prev.body,
+                        image: article.displayCard?.image_url || prev.image
+                    }));
+                    toast.success("Magic! Article details auto-filled.");
+                }
+            } catch (err) {
+                console.error("Failed to auto-fill article details:", err);
+            }
+        }
+    }
 
     const handleSendPush = async (e) => {
         e.preventDefault()
@@ -39,8 +64,9 @@ export default function PwaManager() {
         try {
             const data = await broadcastPush(form)
             toast.success(data.message || "Notification sent successfully!")
-            setForm({ ...form, title: '', body: '' }) // Reset message but keep URL
-            mutate() // Refresh stats to reflect any changes if applicable
+            // Keep URL and image for potential correction, but clear message/title if desired
+            // Or just leave them for the user to see what was sent.
+            mutate()
         } catch (error) {
             console.error('Error sending push:', error)
             toast.error(error.message || "Failed to send notification")
@@ -129,27 +155,6 @@ export default function PwaManager() {
                     <CardContent>
                         <form onSubmit={handleSendPush} className="space-y-4">
                             <div className="space-y-2">
-                                <Label htmlFor="title">Notification Title</Label>
-                                <Input
-                                    id="title"
-                                    placeholder="Enter title..."
-                                    value={form.title}
-                                    onChange={(e) => setForm({ ...form, title: e.target.value })}
-                                    required
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="message">Message Body</Label>
-                                <Textarea
-                                    id="message"
-                                    placeholder="Enter your message here..."
-                                    className="min-h-[100px]"
-                                    value={form.body}
-                                    onChange={(e) => setForm({ ...form, body: e.target.value })}
-                                    required
-                                />
-                            </div>
-                            <div className="space-y-2">
                                 <Label htmlFor="url">Action URL (slug)</Label>
                                 <div className="flex gap-2">
                                     <span className="inline-flex items-center px-3 rounded-md border border-input bg-muted text-muted-foreground text-sm">
@@ -165,12 +170,53 @@ export default function PwaManager() {
                                             if (val.includes('infomly.com/')) {
                                                 val = val.split('infomly.com/')[1];
                                             }
-                                            setForm({ ...form, url: '/' + val.replace(/^\//, '') })
+                                            const newUrl = '/' + val.replace(/^\//, '');
+                                            setForm({ ...form, url: newUrl });
+                                            // Trigger magic auto-fill
+                                            if (newUrl.length > 10) fetchArticleDetails(newUrl);
                                         }}
                                     />
                                 </div>
-                                <p className="text-[10px] text-muted-foreground">Where the user lands when they click the notification.</p>
+                                <p className="text-[10px] text-muted-foreground">Where the user lands when they click the notification. Pasting an article link will auto-fill the form!</p>
                             </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="title">Notification Title</Label>
+                                <Input
+                                    id="title"
+                                    placeholder="Enter title..."
+                                    value={form.title}
+                                    onChange={(e) => setForm({ ...form, title: e.target.value })}
+                                    required
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="message">Message Body</Label>
+                                <Textarea
+                                    id="message"
+                                    placeholder="Enter your message here..."
+                                    className="min-h-[80px]"
+                                    value={form.body}
+                                    onChange={(e) => setForm({ ...form, body: e.target.value })}
+                                    required
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="image">Banner Image URL (Google Discover Style)</Label>
+                                <Input
+                                    id="image"
+                                    placeholder="https://.../featured-image.jpg (Optional)"
+                                    value={form.image}
+                                    onChange={(e) => setForm({ ...form, image: e.target.value })}
+                                />
+                                {form.image && (
+                                    <div className="mt-2 relative aspect-video rounded-md overflow-hidden bg-muted border">
+                                        <img src={form.image} alt="Preview" className="object-cover w-full h-full" />
+                                    </div>
+                                )}
+                            </div>
+
                             <Button type="submit" className="w-full" disabled={sending || stats?.total_subscriptions === 0}>
                                 {sending ? (
                                     <>
