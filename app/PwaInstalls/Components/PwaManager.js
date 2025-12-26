@@ -11,17 +11,18 @@ import {
     GlobeIcon,
     LaptopIcon
 } from "lucide-react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { InfoIcon, AlertCircleIcon, CheckCircle2Icon } from "lucide-react"
 import { toast } from "sonner"
 import { usePwa } from "@/hooks/Pwa/usePwa"
 
 export default function PwaManager() {
     const { stats, isLoading, broadcastPush, mutate } = usePwa()
     const [sending, setSending] = useState(false)
+    const [isAutoFilling, setIsAutoFilling] = useState(false)
     const [form, setForm] = useState({
         title: 'New Update in Infomly Lab!',
         body: 'Check out the latest insights we just published.',
@@ -37,7 +38,8 @@ export default function PwaManager() {
         if (match) {
             const [_, year, month, day, slug] = match;
             try {
-                toast.loading("Fetching article details...", { id: 'autofill' });
+                setIsAutoFilling(true);
+                toast.loading("Magic Sync: Fetching blog content...", { id: 'autofill' });
                 // We use the public blog API to fetch article details
                 const data = await fetch(`https://backend.infomly.com/api/blog/${year}/${month}/${day}/${slug}`).then(res => res.json());
 
@@ -49,16 +51,21 @@ export default function PwaManager() {
                         body: article.displayCard?.description || article.summary || prev.body,
                         image: article.displayCard?.image_url || prev.image
                     }));
-                    toast.success("Magic! Article details auto-filled.", { id: 'autofill' });
+                    toast.success("Ready! Blog title and image synced.", { id: 'autofill' });
                 } else {
                     toast.error("Article not found. Check the URL.", { id: 'autofill' });
                 }
             } catch (err) {
                 console.error("Failed to auto-fill article details:", err);
-                toast.error("Failed to auto-fill. Try manually entering.", { id: 'autofill' });
+                toast.error("Cloud Error: Try manually entering.", { id: 'autofill' });
+            } finally {
+                setIsAutoFilling(false);
             }
         }
     }
+
+    const isDefaultContent = form.title === 'New Update in Infomly Lab!' || form.body === 'Check out the latest insights we just published.';
+    const canSend = !isAutoFilling && !sending && stats?.total_subscriptions > 0 && (!isDefaultContent || form.url === '/');
 
     const handleSendPush = async (e) => {
         e.preventDefault()
@@ -191,13 +198,24 @@ export default function PwaManager() {
                                         variant="outline"
                                         size="icon"
                                         onClick={() => fetchArticleDetails(form.url)}
+                                        disabled={isAutoFilling}
                                         title="Power Fill from URL"
                                     >
-                                        <RefreshCwIcon className="h-4 w-4" />
+                                        <RefreshCwIcon className={`h-4 w-4 ${isAutoFilling ? 'animate-spin' : ''}`} />
                                     </Button>
                                 </div>
-                                <p className="text-[10px] text-muted-foreground">Pasting an article link will auto-fill the form! Use the refresh button to re-fetch.</p>
+                                <p className="text-[10px] text-muted-foreground">Pasting a link will automatically pull the blog photo and title!</p>
                             </div>
+
+                            {form.url !== '/' && isDefaultContent && !isAutoFilling && (
+                                <Alert className="bg-orange-500/10 border-orange-500/20 py-2">
+                                    <AlertCircleIcon className="h-4 w-4 text-orange-500" />
+                                    <AlertTitle className="text-xs text-orange-500 font-bold">Stale Text Alert</AlertTitle>
+                                    <AlertDescription className="text-[10px] text-orange-400">
+                                        You are still using default text. Click the 🔄 icon next to the URL to sync the blog details first!
+                                    </AlertDescription>
+                                </Alert>
+                            )}
 
                             <div className="space-y-2">
                                 <Label htmlFor="title">Notification Title</Label>
@@ -229,23 +247,62 @@ export default function PwaManager() {
                                     value={form.image}
                                     onChange={(e) => setForm({ ...form, image: e.target.value })}
                                 />
-                                {form.image && (
-                                    <div className="mt-2 relative aspect-video rounded-md overflow-hidden bg-muted border">
-                                        <img src={form.image} alt="Preview" className="object-cover w-full h-full" />
-                                    </div>
-                                )}
                             </div>
 
-                            <Button type="submit" className="w-full" disabled={sending || stats?.total_subscriptions === 0}>
+                            {/* Live Phone Preview */}
+                            <div className="mt-6 pt-4 border-t">
+                                <Label className="text-[10px] text-muted-foreground uppercase font-bold flex items-center gap-2 mb-3">
+                                    <SmartphoneIcon className="h-3 w-3" />
+                                    Expanded Notification Preview (Phone View)
+                                </Label>
+                                <div className="bg-[#121212] rounded-2xl p-4 border border-white/5 shadow-2xl overflow-hidden max-w-[320px] mx-auto scale-95 origin-top transition-all">
+                                    <div className="flex items-start gap-3">
+                                        <div className="h-10 w-10 rounded-xl bg-white/5 flex items-center justify-center flex-shrink-0">
+                                            <img src="/logo.png" alt="" className="h-6 w-6 opacity-80" onError={(e) => e.target.src = '/icon-192x192.png'} />
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <div className="flex items-center justify-between mb-0.5">
+                                                <span className="text-[10px] font-medium text-white/40">Infomly • infomly.com</span>
+                                                <span className="text-[10px] text-white/20">Now</span>
+                                            </div>
+                                            <h4 className="text-sm font-bold text-white truncate">{form.title}</h4>
+                                            <p className="text-xs text-white/70 line-clamp-2 leading-tight">{form.body}</p>
+                                        </div>
+                                    </div>
+
+                                    {form.image && (
+                                        <div className="mt-3 aspect-[2/1] rounded-lg overflow-hidden border border-white/5 shadow-inner">
+                                            <img src={form.image} alt="Blog Graphic" className="object-cover w-full h-full" />
+                                        </div>
+                                    )}
+
+                                    <div className="mt-3 flex gap-2">
+                                        <div className="flex-1 py-1.5 rounded-md bg-white/5 text-[10px] font-bold text-white text-center">View Story</div>
+                                        <div className="flex-1 py-1.5 rounded-md bg-white/5 text-[10px] font-bold text-white/30 text-center">Dismiss</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <Button type="submit" className="w-full mt-4" disabled={!canSend}>
                                 {sending ? (
                                     <>
                                         <RefreshCwIcon className="mr-2 h-4 w-4 animate-spin" />
-                                        Sending...
+                                        Blasting to users...
+                                    </>
+                                ) : isAutoFilling ? (
+                                    <>
+                                        <RefreshCwIcon className="mr-2 h-4 w-4 animate-spin" />
+                                        Syncing Blog Details...
                                     </>
                                 ) : stats?.total_subscriptions === 0 ? (
                                     <>
                                         <BellIcon className="mr-2 h-4 w-4 opacity-50" />
-                                        Waiting for Subscribers...
+                                        No Subscribers Yet
+                                    </>
+                                ) : isDefaultContent && form.url !== '/' ? (
+                                    <>
+                                        <AlertCircleIcon className="mr-2 h-4 w-4 text-orange-400" />
+                                        Fetch Content First
                                     </>
                                 ) : (
                                     <>
