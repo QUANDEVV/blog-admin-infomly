@@ -15,6 +15,7 @@ import {
   ListIcon,
   SearchIcon,
   SettingsIcon,
+  SmartphoneIcon,
   UsersIcon,
   Trophy,
   GlobeIcon,
@@ -97,6 +98,11 @@ const data = {
       title: "SEO Tools",
       url: "/SEO",
       icon: SearchIcon,
+    },
+    {
+      title: "PWA Installs",
+      url: "/PwaInstalls",
+      icon: SmartphoneIcon,
     },
   ],
   navSecondary: [
