@@ -32,6 +32,7 @@ import {
   PlaneIcon,
   PlusCircleIcon,
   PenToolIcon,
+  CalendarIcon,
 } from "lucide-react"
 
 import { NavMain } from "@/components/nav-main"
@@ -103,6 +104,11 @@ const data = {
       title: "PWA Installs",
       url: "/PwaInstalls",
       icon: SmartphoneIcon,
+    },
+    {
+      title: "Scheduled",
+      url: "/Scheduled",
+      icon: CalendarIcon,
     },
   ],
   navSecondary: [
