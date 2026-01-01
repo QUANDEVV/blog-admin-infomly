@@ -27,7 +27,7 @@ const DisplayCardList_New = ({ onEdit, showStats = true, onToggleStats }) => {
 
   const { display_cards, isLoading, mutate, pagination } = useDisplayCards(currentPage)
   const { deleteDisplayCard } = useDeleteDisplayCard()
-  
+
   // Use analytics hook with filters - recalculates stats when category/subcategory changes
   const { stats, isLoading: statsLoading, hasFilters } = useAnalytics(
     categoryFilter !== 'all' ? categoryFilter : null,
@@ -90,6 +90,7 @@ const DisplayCardList_New = ({ onEdit, showStats = true, onToggleStats }) => {
   const currentPageCount = filteredCards.length
   const published = filteredCards.filter(c => c.status === 'published').length
   const drafts = filteredCards.filter(c => c.status === 'draft').length
+  const scheduled = filteredCards.filter(c => c.status === 'scheduled').length
 
   if (isLoading) {
     return (
@@ -114,7 +115,7 @@ const DisplayCardList_New = ({ onEdit, showStats = true, onToggleStats }) => {
                 <div className="flex items-center gap-2 text-sm">
                   <Filter className="h-4 w-4 text-blue-600" />
                   <span className="font-semibold text-blue-600">
-                    Filtered by: {stats.filter_applied.type === 'subcategory' 
+                    Filtered by: {stats.filter_applied.type === 'subcategory'
                       ? `${stats.filter_applied.category_name} > ${stats.filter_applied.subcategory_name}`
                       : stats.filter_applied.category_name}
                   </span>
@@ -161,6 +162,15 @@ const DisplayCardList_New = ({ onEdit, showStats = true, onToggleStats }) => {
                       {stats?.article_counts?.published || 0} published
                     </div>
                   )}
+                </CardContent>
+              </Card>
+
+              <Card className="min-w-[140px] md:min-w-0">
+                <CardHeader className="pb-2 px-4 pt-3">
+                  <CardTitle className="text-xs font-medium text-muted-foreground">Scheduled</CardTitle>
+                </CardHeader>
+                <CardContent className="px-4 pb-3">
+                  <div className="text-2xl md:text-3xl font-bold text-blue-600">{scheduled}</div>
                 </CardContent>
               </Card>
 
@@ -225,7 +235,7 @@ const DisplayCardList_New = ({ onEdit, showStats = true, onToggleStats }) => {
               </span>
               <span className="hidden md:inline">•</span>
               <span>
-                You have written {(stats?.reading_equivalents?.pages || 0).toLocaleString()} pages 
+                You have written {(stats?.reading_equivalents?.pages || 0).toLocaleString()} pages
                 {hasFilters && ` in ${stats?.filter_applied?.type === 'subcategory' ? stats?.filter_applied?.subcategory_name : stats?.filter_applied?.category_name}`}
               </span>
               <span className="hidden md:inline">•</span>
@@ -289,6 +299,7 @@ const DisplayCardList_New = ({ onEdit, showStats = true, onToggleStats }) => {
                 <SelectContent>
                   <SelectItem value="all">All Status</SelectItem>
                   <SelectItem value="published">Published</SelectItem>
+                  <SelectItem value="scheduled">Scheduled</SelectItem>
                   <SelectItem value="draft">Drafts</SelectItem>
                 </SelectContent>
               </Select>
@@ -357,11 +368,16 @@ const DisplayCardList_New = ({ onEdit, showStats = true, onToggleStats }) => {
                       </td>
                       <td className="px-4 py-4">
                         <Badge
-                          variant={card.status === 'published' ? 'default' : 'secondary'}
+                          variant={card.status === 'published' ? 'default' : card.status === 'scheduled' ? 'outline' : 'secondary'}
                           className="text-xs font-semibold"
                         >
-                          {card.status === 'published' ? '✅ Published' : '📝 Draft'}
+                          {card.status === 'published' ? '✅ Published' : card.status === 'scheduled' ? '⏰ Scheduled' : '📝 Draft'}
                         </Badge>
+                        {card.status === 'scheduled' && card.published_at && (
+                          <div className="text-[10px] text-muted-foreground mt-1">
+                            {new Date(card.published_at).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                          </div>
+                        )}
                       </td>
                       <td className="px-4 py-4 text-xs font-medium">
                         {card.content ? (

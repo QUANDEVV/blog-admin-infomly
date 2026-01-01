@@ -170,6 +170,7 @@ const ContentStudioSidebar = ({ onContentSelect, selectedContentId }) => {
                             <SelectContent>
                                 <SelectItem value="all">All Status</SelectItem>
                                 <SelectItem value="published">Published</SelectItem>
+                                <SelectItem value="scheduled">Scheduled</SelectItem>
                                 <SelectItem value="draft">Drafts</SelectItem>
                             </SelectContent>
                         </Select>
@@ -215,10 +216,10 @@ const ContentStudioSidebar = ({ onContentSelect, selectedContentId }) => {
                                         </div>
                                     </div>
                                     <Badge
-                                        variant={card.status === 'published' ? 'default' : 'secondary'}
+                                        variant={card.status === 'published' ? 'default' : card.status === 'scheduled' ? 'outline' : 'secondary'}
                                         className="text-[10px] shrink-0"
                                     >
-                                        {card.status === 'published' ? '✅' : '📝'}
+                                        {card.status === 'published' ? '✅' : card.status === 'scheduled' ? '⏰' : '📝'}
                                     </Badge>
                                 </div>
                                 {card.content && (

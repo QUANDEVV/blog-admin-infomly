@@ -53,6 +53,7 @@ const DisplayCardContentForm = ({ card, categories = [], subcategories = [], aut
   const [featuredImage, setFeaturedImage] = useState(null)
   const [previewUrl, setPreviewUrl] = useState(null)
   const [altText, setAltText] = useState('')
+  const [publishedAt, setPublishedAt] = useState('')
 
   // ===== CONTENT FIELDS =====
   const [contentBody, setContentBody] = useState('')
@@ -74,29 +75,41 @@ const DisplayCardContentForm = ({ card, categories = [], subcategories = [], aut
     ? subcategories?.filter((sc) => String(sc.category?.id ?? sc.category_id) === categoryId)
     : subcategories
 
-    /**
-   * Load existing data when editing
-   * Display Card data comes from card prop
-   * Categories, subcategories, and authors are passed as props from parent
-   * (loaded from backend in a single API call)
-   */
+  /**
+ * Load existing data when editing
+ * Display Card data comes from card prop
+ * Categories, subcategories, and authors are passed as props from parent
+ * (loaded from backend in a single API call)
+ */
   useEffect(() => {
     if (card) {
       // Extract data from card for editing (debug logging removed for performance)
-      
+
       // Load Display Card fields
       setTitle(card.title || '')
       setExcerpt(card.excerpt || '')
-      
+
       // Extract category from subcategory.category structure
       const extractedCategoryId = card.subcategory?.category?.id?.toString() || ''
       setCategoryId(extractedCategoryId)
-      
+
       // Extract subcategory ID
       const extractedSubcategoryId = card.subcategory?.id?.toString() || card.subcategory_id?.toString() || ''
       setSubcategoryId(extractedSubcategoryId)
-      
+
       setStatus(card.status || 'draft')
+      // Format Postgres timestamp for datetime-local input (YYYY-MM-DDTHH:MM)
+      if (card.published_at) {
+        const date = new Date(card.published_at)
+        // Correctly format for datetime-local (Local Time)
+        // We need YYYY-MM-DDTHH:mm in local time, not UTC
+        const offset = date.getTimezoneOffset() * 60000
+        const localISOTime = (new Date(date - offset)).toISOString().slice(0, 16)
+        setPublishedAt(localISOTime)
+      } else {
+        setPublishedAt('')
+      }
+
       setPreviewUrl(card.featured_image || null)
       setAltText(card.alt_text || '')
       setFeaturedImage(null)
@@ -104,11 +117,11 @@ const DisplayCardContentForm = ({ card, categories = [], subcategories = [], aut
       // Load Content fields if linked
       if (card.content) {
         setContentBody(card.content.content || card.content.body || '')
-        
+
         // Extract author ID from content.author or content.author_id
         const extractedAuthorId = card.content.author?.id?.toString() || card.content.author_id?.toString() || ''
         setAuthorId(extractedAuthorId)
-        
+
         setSlug(card.content.slug || '')
       } else {
         // No content linked yet (draft Display Card)
@@ -126,6 +139,7 @@ const DisplayCardContentForm = ({ card, categories = [], subcategories = [], aut
       setFeaturedImage(null)
       setPreviewUrl(null)
       setAltText('')
+      setPublishedAt('')
       setContentBody('')
       setAuthorId('')
       setSlug('')
@@ -158,7 +172,7 @@ const DisplayCardContentForm = ({ card, categories = [], subcategories = [], aut
         maxWidthOrHeight: 1920,
       })
       setFeaturedImage(compressed)
-      
+
       // Create preview URL
       const url = URL.createObjectURL(compressed)
       if (previewUrl && previewUrl.startsWith('blob:')) {
@@ -207,16 +221,22 @@ const DisplayCardContentForm = ({ card, categories = [], subcategories = [], aut
       return
     }
 
-    // Validate Content fields if publishing
-    if (status === 'published') {
+    // Validate Content fields if publishing or scheduling
+    if (status === 'published' || status === 'scheduled') {
       if (!contentBody.trim()) {
-        setError('Content body is required for published cards')
+        setError('Content body is required for public/scheduled cards')
         return
       }
       if (!authorId) {
-        setError('Author is required for published cards')
+        setError('Author is required for public/scheduled cards')
         return
       }
+    }
+
+    // Validate Date if scheduling
+    if (status === 'scheduled' && !publishedAt) {
+      setError('Publish date is required for scheduled cards')
+      return
     }
 
     setIsSubmitting(true)
@@ -225,7 +245,7 @@ const DisplayCardContentForm = ({ card, categories = [], subcategories = [], aut
     try {
       // Build FormData for Display Card (supports file upload)
       const formData = new FormData()
-      
+
       // DisplayCard fields - DisplayCard is the SOURCE OF TRUTH
       formData.append('title', title.trim())
       formData.append('excerpt', excerpt.trim() || '')
@@ -233,7 +253,7 @@ const DisplayCardContentForm = ({ card, categories = [], subcategories = [], aut
       // Category is accessed via: DisplayCard -> Subcategory -> Category
       formData.append('subcategory_id', subcategoryId)
       formData.append('status', status)
-      
+
       if (featuredImage) {
         setLoadingMessage('Uploading image...')
         formData.append('featured_image', featuredImage)
@@ -242,15 +262,23 @@ const DisplayCardContentForm = ({ card, categories = [], subcategories = [], aut
         formData.append('alt_text', altText)
       }
 
+      // Add Published At date if Scheduled
+      // If status is scheduled, we MUST have a date.
+      if (status === 'scheduled' && publishedAt) {
+        formData.append('published_at', publishedAt)
+      } else if (status === 'published' && !card?.published_at) {
+        // If publishing now and no date exists, let backend handle it (defaults to NOW)
+      }
+
       // Content fields (Content belongs to DisplayCard)
       // Content is created as a child record with display_card_id foreign key
       if (contentBody.trim()) {
         formData.append('content_body', contentBody.trim())
       }
-      
+
       // Author ID for Content (required if publishing)
       formData.append('author_id', authorId || '')
-      
+
       if (slug.trim()) {
         formData.append('slug', slug.trim())
       } else if (title) {
@@ -268,7 +296,7 @@ const DisplayCardContentForm = ({ card, categories = [], subcategories = [], aut
 
       setLoadingMessage('')
       setSuccessMessage(isEditMode ? 'Display Card updated successfully!' : 'Display Card created successfully!')
-      
+
       // Reset form if creating new
       if (!isEditMode) {
         setTitle('')
@@ -392,9 +420,9 @@ const DisplayCardContentForm = ({ card, categories = [], subcategories = [], aut
               <Label htmlFor="category" className="flex items-center gap-2">
                 <span className="text-red-500">*</span> Category
               </Label>
-              <Select 
+              <Select
                 key={`category-${card?.id || 'new'}-${categoryId}`}
-                value={categoryId} 
+                value={categoryId}
                 onValueChange={(value) => {
                   setCategoryId(value)
                   setSubcategoryId('') // Reset subcategory when category changes
@@ -418,9 +446,9 @@ const DisplayCardContentForm = ({ card, categories = [], subcategories = [], aut
               <Label htmlFor="subcategory" className="flex items-center gap-2">
                 <span className="text-red-500">*</span> Subcategory
               </Label>
-              <Select 
+              <Select
                 key={`subcategory-${card?.id || 'new'}-${subcategoryId}`}
-                value={subcategoryId} 
+                value={subcategoryId}
                 onValueChange={(value) => {
                   setSubcategoryId(value)
                 }}
@@ -480,9 +508,9 @@ const DisplayCardContentForm = ({ card, categories = [], subcategories = [], aut
             <Label htmlFor="status" className="flex items-center gap-2">
               <span className="text-red-500">*</span> Status
             </Label>
-            <Select 
+            <Select
               key={`status-${card?.id || 'new'}-${status}`}
-              value={status} 
+              value={status}
               onValueChange={(value) => {
                 setStatus(value)
               }}
@@ -493,14 +521,35 @@ const DisplayCardContentForm = ({ card, categories = [], subcategories = [], aut
               <SelectContent>
                 <SelectItem value="draft">Draft</SelectItem>
                 <SelectItem value="published">Published</SelectItem>
+                <SelectItem value="scheduled">Scheduled</SelectItem>
               </SelectContent>
             </Select>
             <p className="text-xs text-muted-foreground">
-              {status === 'draft' 
-                ? 'Draft cards can be saved without complete content' 
-                : 'Published cards require all content fields to be filled'}
+              {status === 'draft' && 'Draft cards can be saved without complete content'}
+              {status === 'published' && 'Published cards require all content fields to be filled'}
+              {status === 'scheduled' && 'Scheduled cards will automatically publish at the selected time'}
             </p>
           </div>
+
+          {/* Published At Date Picker (Only for Scheduled) */}
+          {status === 'scheduled' && (
+            <div className="space-y-2">
+              <Label htmlFor="published_at" className="flex items-center gap-2">
+                <span className="text-red-500">*</span> Publish Date
+              </Label>
+              <Input
+                id="published_at"
+                type="datetime-local"
+                value={publishedAt}
+                onChange={(e) => setPublishedAt(e.target.value)}
+                required={status === 'scheduled'}
+                className="w-auto block" // Simple block display
+              />
+              <p className="text-xs text-muted-foreground">
+                The card will remain invisible until this time
+              </p>
+            </div>
+          )}
         </div>
 
         <Separator className="my-8" />
@@ -516,7 +565,7 @@ const DisplayCardContentForm = ({ card, categories = [], subcategories = [], aut
           {/* Content Body */}
           <div className="space-y-2">
             <Label htmlFor="content_body" className="flex items-center gap-2">
-              {status === 'published' && <span className="text-red-500">*</span>}
+              {(status === 'published' || status === 'scheduled') && <span className="text-red-500">*</span>}
               Content Body
             </Label>
             <RichTextEditor
@@ -534,13 +583,13 @@ const DisplayCardContentForm = ({ card, categories = [], subcategories = [], aut
             {/* Author */}
             <div className="space-y-2">
               <Label htmlFor="author" className="flex items-center gap-2">
-                {status === 'published' && <span className="text-red-500">*</span>}
+                {(status === 'published' || status === 'scheduled') && <span className="text-red-500">*</span>}
                 <User className="h-4 w-4" />
                 Author
               </Label>
-              <Select 
+              <Select
                 key={`author-${card?.id || 'new'}-${authorId}`}
-                value={authorId} 
+                value={authorId}
                 onValueChange={(value) => {
                   setAuthorId(value)
                 }}
@@ -594,8 +643,8 @@ const DisplayCardContentForm = ({ card, categories = [], subcategories = [], aut
             disabled={isSubmitting}
             className="min-w-[120px]"
           >
-            {isSubmitting 
-              ? (loadingMessage || 'Saving...') 
+            {isSubmitting
+              ? (loadingMessage || 'Saving...')
               : isEditMode ? 'Update Card' : 'Create Card'
             }
           </Button>
