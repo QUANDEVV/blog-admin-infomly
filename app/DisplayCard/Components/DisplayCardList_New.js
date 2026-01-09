@@ -25,7 +25,17 @@ const DisplayCardList_New = ({ onEdit, showStats = true, onToggleStats }) => {
   const { categories } = useCategories()
   const { subcategories } = useSubcategories()
 
-  const { display_cards, isLoading, mutate, pagination } = useDisplayCards(currentPage)
+  // Reset pagination when filters change
+  React.useEffect(() => {
+    setCurrentPage(1)
+  }, [categoryFilter, subcategoryFilter, statusFilter, sortBy])
+
+  const { display_cards, isLoading, mutate, pagination } = useDisplayCards(currentPage, 15, {
+    category_id: categoryFilter,
+    subcategory_id: subcategoryFilter,
+    status: statusFilter,
+    sort_by: sortBy
+  })
   const { deleteDisplayCard } = useDeleteDisplayCard()
 
   // Use analytics hook with filters - recalculates stats when category/subcategory changes
@@ -57,40 +67,15 @@ const DisplayCardList_New = ({ onEdit, showStats = true, onToggleStats }) => {
     ? subcategories?.filter(sc => String(sc.category?.id ?? sc.category_id) === categoryFilter)
     : subcategories
 
-  // Apply filters and sorting
-  let filteredCards = Array.isArray(display_cards) ? display_cards : []
-
-  if (categoryFilter && categoryFilter !== 'all') {
-    filteredCards = filteredCards.filter(card =>
-      String(card.subcategory?.category_id) === categoryFilter
-    )
-  }
-
-  if (subcategoryFilter && subcategoryFilter !== 'all') {
-    filteredCards = filteredCards.filter(card =>
-      String(card.subcategory_id) === subcategoryFilter
-    )
-  }
-
-  if (statusFilter && statusFilter !== 'all') {
-    filteredCards = filteredCards.filter(card => card.status === statusFilter)
-  }
-
-  // Sort
-  if (sortBy === 'newest') {
-    filteredCards.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-  } else if (sortBy === 'oldest') {
-    filteredCards.sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
-  } else if (sortBy === 'title') {
-    filteredCards.sort((a, b) => a.title.localeCompare(b.title))
-  }
+  // Results from backend are already filtered and sorted
+  const filteredCards = Array.isArray(display_cards) ? display_cards : []
 
   // Use pagination total for overall count, filtered length for current view
   const total = pagination?.total || filteredCards.length
-  const currentPageCount = filteredCards.length
-  const published = filteredCards.filter(c => c.status === 'published').length
-  const drafts = filteredCards.filter(c => c.status === 'draft').length
-  const scheduled = filteredCards.filter(c => c.status === 'scheduled').length
+  const published = stats?.article_counts?.published || 0
+  const drafts = stats?.article_counts?.draft || 0
+  const scheduled = filteredCards.filter(c => c.status === 'scheduled').length // Backend might not return scheduled count in stats yet, but we can filter the current page if needed, though stats is better.
+
 
   if (isLoading) {
     return (

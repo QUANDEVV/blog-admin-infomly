@@ -106,8 +106,8 @@ const DisplayCardTable: React.FC<{
 
     let filtered = data.filter((item) => {
       // Determine item's category id from nested relations if present
-  const itemAny = item as any
-  const itemCategoryId = itemAny.subcategory?.category?.id ?? itemAny.subcategory?.category_id
+      const itemAny = item as any
+      const itemCategoryId = itemAny.subcategory?.category?.id ?? itemAny.subcategory?.category_id
 
       // Category filter: if provided and not 'all', require match
       if (filters?.category && filters.category !== 'all') {
@@ -125,6 +125,11 @@ const DisplayCardTable: React.FC<{
 
     return filtered
   }, [data, filters])
+
+  // Reset pagination when filters change
+  React.useEffect(() => {
+    setCurrentPage(1)
+  }, [filters])
 
   const sortedData = React.useMemo(() => {
     if (!sortConfig) return filteredData

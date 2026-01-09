@@ -3,11 +3,19 @@ import { fetcher, get, post, put, del } from '@/lib/apiClient'
 
 const DISPLAY_CARDS_API_BASE = '/admin/display-cards'
 
-export function useDisplayCards(page = 1, perPage = null) {
-  // If perPage is provided, add it to URL, otherwise use backend default (15)
-  const url = perPage 
-    ? `${DISPLAY_CARDS_API_BASE}?page=${page}&per_page=${perPage}`
-    : `${DISPLAY_CARDS_API_BASE}?page=${page}`
+export function useDisplayCards(page = 1, perPage = null, filters = {}) {
+  // Build query parameters
+  const params = new URLSearchParams()
+  params.append('page', page)
+  if (perPage) params.append('per_page', perPage)
+
+  // Add filters
+  if (filters.category_id && filters.category_id !== 'all') params.append('category_id', filters.category_id)
+  if (filters.subcategory_id && filters.subcategory_id !== 'all') params.append('subcategory_id', filters.subcategory_id)
+  if (filters.status && filters.status !== 'all') params.append('status', filters.status)
+  if (filters.sort_by) params.append('sort_by', filters.sort_by)
+
+  const url = `${DISPLAY_CARDS_API_BASE}?${params.toString()}`
   const { data, error, isLoading, mutate } = useSWR(url, fetcher)
 
   return {
