@@ -65,14 +65,14 @@ export default function DisplayCardManager() {
   useEffect(() => {
     const handleMouseMove = (e) => {
       if (!isResizing) return
-      
+
       // Calculate new width based on distance from right edge
       const newWidth = window.innerWidth - e.clientX
-      
+
       // Set minimum and maximum widths
       const minWidth = 400
       const maxWidth = window.innerWidth - 100
-      
+
       if (newWidth >= minWidth && newWidth <= maxWidth) {
         setSheetWidth(newWidth)
       }
@@ -98,9 +98,9 @@ export default function DisplayCardManager() {
   }, [isResizing])
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
+    <div className="flex flex-col h-[calc(100vh-80px)] overflow-hidden">
+      {/* Sticky Header */}
+      <div className="flex-shrink-0 flex items-center justify-between pb-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Display Card Management</h1>
           <p className="text-muted-foreground mt-1">Create and manage your blog content</p>
@@ -110,27 +110,28 @@ export default function DisplayCardManager() {
         </Button>
       </div>
 
-      {/* Display Card List with Stats and Filters */}
-      <DisplayCardList 
-        onEdit={handleEdit} 
-        showStats={showStats}
-        onToggleStats={() => setShowStats(!showStats)}
-      />
+      {/* Display Card List with Stats and Filters - Scrollable */}
+      <div className="flex-1 overflow-hidden">
+        <DisplayCardList
+          onEdit={handleEdit}
+          showStats={showStats}
+          onToggleStats={() => setShowStats(!showStats)}
+        />
+      </div>
 
       {/* Display Card + Content Form Sheet with Resizable Width */}
       <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-        <SheetContent 
+        <SheetContent
           ref={sheetRef}
-          side="right" 
+          side="right"
           className="overflow-y-auto p-0"
           style={{ width: `${sheetWidth}px`, maxWidth: '95vw' }}
         >
           {/* Resize Handle */}
           <div
             onMouseDown={handleMouseDown}
-            className={`absolute left-0 top-0 bottom-0 w-1 cursor-ew-resize hover:bg-blue-500 transition-colors ${
-              isResizing ? 'bg-blue-500' : 'bg-transparent'
-            }`}
+            className={`absolute left-0 top-0 bottom-0 w-1 cursor-ew-resize hover:bg-blue-500 transition-colors ${isResizing ? 'bg-blue-500' : 'bg-transparent'
+              }`}
             style={{ zIndex: 50 }}
           >
             <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-12 bg-gray-300 dark:bg-gray-600 rounded-r" />
@@ -141,7 +142,7 @@ export default function DisplayCardManager() {
             <p className="text-xs text-muted-foreground mt-1">Drag the left edge to resize</p>
           </SheetHeader>
           <div className="mt-0">
-            <DisplayCardContentForm 
+            <DisplayCardContentForm
               card={editingCard}
               categories={categories}
               subcategories={subcategories}
